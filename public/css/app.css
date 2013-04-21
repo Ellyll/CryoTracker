@@ -1,0 +1,77 @@
+body {
+  background-color: white;
+  color: black;
+  font-family: Arial,Helvetica,sans-serif;
+  font-size: 11pt;
+  margin-left: 0;
+  margin-right: 1px;
+  margin-top: 0;
+  padding: 0.25em;
+  text-align: justify;
+}
+
+a:link { color: blue }
+a:visited { color: #700070 }
+a:hover { color: white; background-color: blue }
+a:active { color: black }
+
+li {
+    padding: 0.2em 0.2em 0.2em 0.2em;
+    vertical-align: middle;
+    display: list-item;
+}
+
+ul {
+    list-style: none outside;
+    vertical-align: middle;
+}
+
+th, td {
+    padding: 5px;
+}
+
+/* Heading */
+.heading {
+}
+
+h1.heading_title {
+    margin-top: 0.2em;
+    margin-right: 0.5em;
+    float: left;
+    font-size: 1.25em;
+}
+
+.heading_links {
+    max-width: 52em;
+}
+
+/* Bug Listing */
+table.bug_list {
+    border-collapse: collapse;
+    border: 1px solid black;
+}
+
+table.bug_list tr {
+    text-align: center;
+}
+
+table.bug_list td, table.bug_list th {
+    border-bottom: 1px solid black;
+}
+
+td.bug_id {
+    text-align: right;
+    min-width: 3em;
+}
+
+td.bug_last_modified {
+    width: 6em;
+}
+
+td.bug_description {
+    text-align: left;
+}
+
+td.bug_descrption p {
+    margin: 0.25em;
+}

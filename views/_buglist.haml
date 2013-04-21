@@ -1,0 +1,34 @@
+%table.bug_list
+  %thead
+    %tr
+      %th
+        ID
+        %a(href="sort") &darr;
+        %a(href="sort")> &uarr;
+      %th
+        State
+        %a(href="sort") &darr;
+        %a(href="sort")> &uarr;
+      %th Last Changed
+      %th Description
+      %th Reporter
+      %th Last Change By
+      %th Component
+      %th Severity
+  %tbody
+    - @bugs.each do |bug|
+      %tr{ :style => "background-color: #{bug.current_severity_colour}" }
+        %td.bug_id<
+          - if bug.comment_count > 0 then
+            %span(title="this bug has comments")> *
+          =bug.bug_id
+        %td=bug.current_state_name
+        %td.bug_last_modified=bug.last_changed.strftime('%Y-%m-%d %H:%M:%S')
+        %td.bug_description
+          %p=bug.description
+        %td=bug.reported_by
+        %td=bug.last_change_by
+        %td=bug.component
+        %td=bug.severity_name
+
+

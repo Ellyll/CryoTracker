@@ -1,0 +1,53 @@
+!!! 5
+%html
+  %head
+    %link(rel="stylesheet" type="text/css" href="css/app.css")
+    %link(rel="icon" href="images/nobugs-icon.jpg" type="image/jpeg")
+    %title PRAWF
+    %meta(charset="utf-8")
+  %body
+    -# %img(src="images/cryo-nobugs.jpg" alt="Cryosphere" width="470" height="98")
+    #heading
+      %h1.heading_title
+        Cryo
+        %br/
+        Tracker
+      .heading_links
+        %a(href="/")Main
+        |
+        %a(href="index.php?new=0&amp;con=0&amp;watch=1")Watchlist
+        |
+        %a(href="stats.php")Stats
+        |
+        %a(href="submit.php")Submit a Bug
+        |
+        %a(href="cabal.php?")Cabal List
+        |
+        %a(href="about.php")About
+        |
+        %a(href="/dev/")Admin Area
+        %br/
+        Bugs:
+        %a(href="summary.php")Summary
+        -
+        %a(href="index.php?new=0&amp;con=0")All
+        -
+        %a(href="index.php?")Open
+        (
+        %a(href="index.php?con=0")New
+        -
+        %a(href="index.php?new=0")Confirmed
+        ) -
+        %a(href="index.php?new=0&amp;con=0&amp;fix=1&amp;ver=1")Closed
+        (
+        %a(href="index.php?new=0&amp;con=0&amp;fix=1")Unverified
+        -
+        %a(href="index.php?new=0&amp;con=0&amp;ver=1")Verified
+        ) -
+        %a(href="index.php?new=0&amp;con=0&amp;hel=1&amp;nab=1")Unbugs
+        (
+        %a(href="index.php?new=0&amp;con=0&amp;hel=1")Held -
+        %a(href="index.php?new=0&amp;con=0&amp;nab=1")NotABug
+        )
+        %hr/
+    = yield
