@@ -1,16 +1,13 @@
 
+
+
 get '/' do
   protected!
   @title = "#{Config::APP[:name]} - Bugs"
   #TODO: check if user is banned
 
-  if params[:page]
-    page = (params[:page].to_i) -1
-    page = 0 if page < 0
-  else
-    page = 0
-  end
-  page_size = 30
+  page = get_page(params[:page])
+  page_size = get_page_size(params[:page_size])
 
   columns_available = {
       'bug_id.desc' => :bug_id.desc,

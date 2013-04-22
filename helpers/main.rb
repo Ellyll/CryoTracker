@@ -18,4 +18,26 @@ helpers do
     false
   end
 
+  def get_page(page_param)
+    if page_param
+      page = (page_param.to_i) -1
+      page = 0 if page < 0
+    else
+      page = 0
+    end
+    page
+  end
+
+  def get_page_size(page_size_param)
+    default_size = Config::APP[:default_page_size]
+    default_size ||= 30
+    if page_size_param
+      page_size = (page_size_param.to_i)
+      page_size = default_size if page_size < 1
+    else
+      page_size = default_size
+    end
+    page_size
+  end
+
 end

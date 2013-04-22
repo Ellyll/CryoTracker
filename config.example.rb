@@ -1,5 +1,5 @@
 module Config
-  APP = { :name => 'CryoTracker' }
+  APP = { :name => 'CryoTracker', :default_page_size => 20 }
   DB = { :connection => 'mysql://user:password@localhost/databasename' }
   AUTHENTICATION = { :user_files_directory => '/some/path/vardata/users' }
 end
