@@ -11,7 +11,7 @@ helpers do
 
   def protected!
     unless authorised?
-      response['WWW-Authenticate'] = 'Basic realm="CryoTracker"'
+      response['WWW-Authenticate'] = "Basic realm=\"#{Config::APP[:name]}\""
       throw(:halt, [401, "Not authorised\n"])
     end
   end

@@ -1,7 +1,9 @@
 
 get '/' do
   protected!
+  @title = "#{Config::APP[:name]} - Bugs"
   #TODO: check if user is banned
+
   if params[:page]
     page = (params[:page].to_i) -1
     page = 0 if page < 0
