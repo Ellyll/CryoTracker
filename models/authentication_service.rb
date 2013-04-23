@@ -6,37 +6,32 @@ class AuthenticationService
   end
 
   def is_authenticated?(username,password)
-    if username !~ /^[a-z0-9]+$/
+    unless username =~ /^[a-z0-9]+$/
       return false
     end
     saved_hash = get_saved_hash(username)
     if saved_hash == nil then
       return false
     end
-    new_hash = password.crypt(saved_hash)
-    if saved_hash == new_hash then
-      return true
-    else
-      return false
-    end
+
+    saved_hash == password.crypt(saved_hash)
   end
 
   private
   
   def get_saved_hash(username)
-    filename = @user_files_dir + "/" + username
-    saved_hash = ''
-    if !File.exists? filename then
+    filename = @user_files_dir + '/' + username
+    unless File.exists? filename
       return nil
     end
-    File.open(filename, "r").each_line do |line|
-      if line =~ /password/ then
+    File.open(filename, 'r').each_line do |line|
+      if line =~ /password/
         saved_hash = line.strip.sub(/string password "([^"]+)"/, "\\1")
         return saved_hash
       end
     end
 
-    return nil
+    nil
   end
 end
 
