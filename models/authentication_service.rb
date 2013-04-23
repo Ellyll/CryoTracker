@@ -6,6 +6,9 @@ class AuthenticationService
   end
 
   def is_authenticated?(username,password)
+    if username !~ /^[a-z0-9]+$/
+      return false
+    end
     saved_hash = get_saved_hash(username)
     if saved_hash == nil then
       return false
