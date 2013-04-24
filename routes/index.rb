@@ -46,6 +46,33 @@ def get_order(order_param)
   order
 end
 
+def get_states(state_param)
+  states_available = {
+                       'open' => [ 1, 2 ],
+                       'new' => 1,
+                       'confirmed' => 2,
+                       'closed' => [ 3, 4 ],
+                       'verified' => 4,
+                       'unverified' => 3,
+                       'unbugs' => [ 5, 6 ],
+                       'held' => 5,
+                       'notabug' => 6
+  }
+  states = []
+  if state_param
+    if state_param == 'all'
+      return []
+    end
+    state_param.each do |state|
+      states.push(states_available[state]) if states_available.has_key?(state)
+    end
+    states = states.flatten()
+  end
+  states = [ 1, 2 ] if states.count == 0
+
+  states
+end
+
 
 get '/' do
   protected!
@@ -56,13 +83,18 @@ get '/' do
   page_size = get_page_size(params[:page_size])
 
   order = get_order(params[:order])
+  states = get_states(params[:state])
 
   @bugs = BugList.all(
-      :current_state_id => [1,2],
       :limit => page_size,
       :offset => page*page_size,
       :order => order
   )
+
+  if states.count > 0
+    puts "DEBUG: states: #{states.join('|')}"
+    @bugs = @bugs.all( :current_state_id => states )
+  end
 
   # map model to view model bugs
   @bugs = map_bug_list_to_view_model(@bugs)
