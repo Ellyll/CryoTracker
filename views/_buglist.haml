@@ -3,18 +3,36 @@
     %tr
       %th
         ID
-        %a(href="sort") &darr;
-        %a(href="sort")> &uarr;
+        %a(href="#{ build_url('', { :order => 'bug_id.desc', :state => @state_url_option})}") &darr;
+        %a(href="#{ build_url('', { :order => 'bug_id.asc',  :state => @state_url_option})}")> &uarr;
       %th
         State
-        %a(href="sort") &darr;
-        %a(href="sort")> &uarr;
-      %th Last Changed
-      %th Description
-      %th Reporter
-      %th Last Change By
-      %th Component
-      %th Severity
+        %a(href="#{ build_url('', { :order => 'state.desc', :state => @state_url_option})}") &darr;
+        %a(href="#{ build_url('', { :order => 'state.asc',  :state => @state_url_option})}")> &uarr;
+      %th
+        Last Changed
+        %a(href="#{ build_url('', { :order => 'last_changed.desc', :state => @state_url_option})}") &darr;
+        %a(href="#{ build_url('', { :order => 'last_changed.asc',  :state => @state_url_option})}")> &uarr;
+      %th
+        Description
+        %a(href="#{ build_url('', { :order => 'description.desc', :state => @state_url_option }) }") &darr;
+        %a(href="#{ build_url('', { :order => 'description.asc',  :state => @state_url_option }) }")> &uarr;
+      %th
+        Reporter
+        %a(href="#{ build_url('', { :order => 'reported_by.desc', :state => @state_url_option})}") &darr;
+        %a(href="#{ build_url('', { :order => 'reported_by.asc',  :state => @state_url_option})}")> &uarr;
+      %th
+        Last Change By
+        %a(href="#{ build_url('', { :order => 'last_changed_by.desc', :state => @state_url_option})}") &darr;
+        %a(href="#{ build_url('', { :order => 'last_changed_by.asc',  :state => @state_url_option})}")> &uarr;
+      %th
+        Component
+        %a(href="#{ build_url('', { :order => 'component.desc', :state => @state_url_option})}") &darr;
+        %a(href="#{ build_url('', { :order => 'component.asc',  :state => @state_url_option})}")> &uarr;
+      %th
+        Severity
+        %a(href="#{ build_url('', { :order => 'severity.desc', :state => @state_url_option})}") &darr;
+        %a(href="#{ build_url('', { :order => 'severity.asc',  :state => @state_url_option})}")> &uarr;
   %tbody
     - @bugs.each do |bug|
       %tr{ :style => "background-color: #{bug.current_severity_colour}" }
@@ -30,5 +48,3 @@
         %td=bug.last_change_by
         %td=bug.component
         %td=bug.severity_name
-
-

@@ -29,10 +29,19 @@ def get_order(order_param)
       'bug_id.desc' => :bug_id.desc,
       'state.desc' => :current_state_name.desc,
       'last_changed.desc' => :last_changed.desc,
+      'description.desc' => :description.desc,
       'reported_by.desc' => :reported_by.desc,
       'component.desc' => [:component_1_name.desc, :component_2.desc],
       'severity.desc' => :current_severity_name.desc,
-      'last_changed_by.desc' => :last_changed_by.desc
+      'last_changed_by.desc' => :last_changed_by.desc,
+      'bug_id.asc' => :bug_id.asc,
+      'state.asc' => :current_state_name.asc,
+      'last_changed.asc' => :last_changed.asc,
+      'description.asc' => :description.asc,
+      'reported_by.asc' => :reported_by.asc,
+      'component.asc' => [:component_1_name.asc, :component_2.asc],
+      'severity.asc' => :current_severity_name.asc,
+      'last_changed_by.asc' => :last_changed_by.asc
   }
   order = []
   if order_param
@@ -59,18 +68,20 @@ def get_states(state_param)
                        'notabug' => 6
   }
   states = []
+  url_option = nil
   if state_param
     if state_param == 'all'
-      return []
+      return [], 'all'
     end
-    state_param.each do |state|
-      states.push(states_available[state]) if states_available.has_key?(state)
+    if states_available.has_key?(state_param)
+        states.push(states_available[state_param])
+        states = states.flatten()
+        url_option = state_param
     end
-    states = states.flatten()
   end
   states = [ 1, 2 ] if states.count == 0
 
-  states
+  return states, url_option
 end
 
 
@@ -83,7 +94,7 @@ get '/' do
   page_size = get_page_size(params[:page_size])
 
   order = get_order(params[:order])
-  states = get_states(params[:state])
+  states, @state_url_option = get_states(params[:state])
 
   @bugs = BugList.all(
       :limit => page_size,
