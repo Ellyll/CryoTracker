@@ -1,3 +1,5 @@
+require 'open-uri'
+
 helpers do
 
   def protected!
@@ -38,6 +40,20 @@ helpers do
       page_size = default_size
     end
     page_size
+  end
+
+  def build_url(stem, options)
+    url = stem
+    first_item = true
+    options.each do |key,value|
+      if value
+        url += first_item ? '?' : '&'
+        url += URI::encode(key.to_s) + '=' + URI::encode(value)
+        first_item = false
+      end
+    end
+
+    url
   end
 
 end
