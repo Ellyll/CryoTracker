@@ -103,7 +103,6 @@ get '/' do
   )
 
   if states.count > 0
-    puts "DEBUG: states: #{states.join('|')}"
     @bugs = @bugs.all( :current_state_id => states )
   end
 
