@@ -59,19 +59,19 @@ table.bug_list td, table.bug_list th {
     border-bottom: 1px solid black;
 }
 
-td.bug_id {
+table.bug_list td.bug_id {
     text-align: right;
     min-width: 3em;
 }
 
-td.bug_last_modified {
+table.bug_list td.state_name {
     width: 6em;
 }
 
-td.bug_description {
+table.bug_list td.description {
     text-align: left;
 }
 
-td.bug_descrption p {
+table.bug_list td.descrption p {
     margin: 0.25em;
 }

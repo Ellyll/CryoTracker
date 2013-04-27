@@ -7,7 +7,7 @@ def map_bug_list_to_view_model(bugs)
     item = BugListItemViewModel.new
     item.bug_id = bug.bug_id
     item.comment_count = bug.comment_count
-    item.current_state_name = bug.current_state_name
+    item.state_name = bug.current_state_name
     item.current_severity_colour = bug.current_severity_colour
     item.last_changed = bug.last_changed
     item.description = bug.description
@@ -17,7 +17,7 @@ def map_bug_list_to_view_model(bugs)
       item.component += ':' + bug.component_2
     end
     item.severity_name = bug.current_severity_name
-    item.last_change_by = bug.last_changed_by
+    item.last_changed_by = bug.last_changed_by
     item
   end
 

@@ -40,11 +40,11 @@
           - if bug.comment_count > 0 then
             %span(title="this bug has comments")> *
           =bug.bug_id
-        %td=bug.current_state_name
-        %td.bug_last_modified=bug.last_changed.strftime('%Y-%m-%d %H:%M:%S')
-        %td.bug_description
+        %td.state_name=bug.state_name
+        %td.last_changed=bug.last_changed.strftime('%Y-%m-%d %H:%M:%S')
+        %td.description
           %p=bug.description
-        %td=bug.reported_by
-        %td=bug.last_change_by
-        %td=bug.component
-        %td=bug.severity_name
+        %td.reported_by=bug.reported_by
+        %td.last_changed_by=bug.last_changed_by
+        %td.component=bug.component
+        %td.severity_name=bug.severity_name
