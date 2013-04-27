@@ -25,6 +25,29 @@ describe 'The index route' do
     Nokogiri::HTML(last_response.body)
   end
 
+  def check_bug_list_order(order, css_selector, is_ascending, content_modifier)
+    doc = get_page_with_order(order)
+    bugs = doc.css(css_selector).map {|b| b.content}
+    bugs.count.should > 0
+
+    if content_modifier
+      bugs = bugs.map { |b| content_modifier.call(b) }
+    end
+
+    max_value = bugs.max_by {|b| b}
+    min_value = bugs.min_by {|b| b}
+
+    last_value = is_ascending ? min_value : max_value
+    bugs.each do |bug|
+      if is_ascending
+        bug.should >= last_value
+      else
+        bug.should <= last_value
+      end
+      last_value = bug
+    end
+  end
+
 
   it 'should not allow unathorised access' do
     get '/'
@@ -39,199 +62,71 @@ describe 'The index route' do
   end
 
   it 'should allow bugs to be sorted by id ascending' do
-    doc = get_page_with_order('bug_id.asc')
-    bugs = doc.css('td.bug_id')
-    bugs.count.should > 0
-
-    last_bug_id = -1
-    bugs.each do |bug|
-      bug_id = bug.content.delete('*').to_i
-      bug_id.should > last_bug_id
-      last_bug_id = bug_id
-    end
+    modifier = lambda { |b| b.delete('*').to_i }
+    check_bug_list_order('bug_id.asc', 'td.bug_id', true, modifier)
   end
 
   it 'should allow bugs to be sorted by id descending' do
-    doc = get_page_with_order('bug_id.desc')
-    bugs = doc.css('td.bug_id')
-    bugs.count.should > 0
-
-    last_bug_id = 999_999_999 # needs to be higher than the biggest bug_id
-    bugs.each do |bug|
-      bug_id = bug.content.delete('*').to_i
-      bug_id.should < last_bug_id
-      last_bug_id = bug_id
-    end
+    modifier = lambda { |b| b.delete('*').to_i }
+    check_bug_list_order('bug_id.desc', 'td.bug_id', false, modifier)
   end
 
   it 'should allow bugs to be sorted by state_name ascending' do
-    doc = get_page_with_order('state.asc')
-    bugs = doc.css('td.state_name')
-    bugs.count.should > 0
-
-    last_state = ''
-    bugs.each do |bug|
-      bug.content.should >= last_state
-      last_state = bug.content
-    end
+    check_bug_list_order('state.asc', 'td.state_name', true, nil)
   end
 
   it 'should allow bugs to be sorted by state_name descending' do
-    doc = get_page_with_order('state.desc')
-    bugs = doc.css('td.state_name')
-    bugs.count.should > 0
-
-    last_state = '~' # Assumes state name is ASCII a-Z
-    bugs.each do |bug|
-      bug.content.should <= last_state
-      last_state = bug.content
-    end
+    check_bug_list_order('state.desc', 'td.state_name', false, nil)
   end
 
   it 'should allow bugs to be sorted by last_changed ascending' do
-    doc = get_page_with_order('last_changed.asc')
-    bugs = doc.css('td.last_changed')
-    bugs.count.should > 0
-
-    last_last_changed = '0000-00-00 00:00:00'
-    bugs.each do |bug|
-      bug.content.should >= last_last_changed
-      last_last_changed = bug.content
-    end
+    check_bug_list_order('last_changed.asc', 'td.last_changed', true, nil)
   end
 
   it 'should allow bugs to be sorted by last_changed descending' do
-    doc = get_page_with_order('last_changed.desc')
-    bugs = doc.css('td.last_changed')
-    bugs.count.should > 0
-
-    last_last_changed = DateTime.now.strftime('%Y-%m-%d %H:%M:%S')
-    bugs.each do |bug|
-      bug.content.should <= last_last_changed
-      last_last_changed = bug.content
-    end
+    check_bug_list_order('last_changed.desc', 'td.last_changed', false, nil)
   end
 
   it 'should allow bugs to be sorted by description ascending' do
-    doc = get_page_with_order('description.asc')
-    bugs = doc.css('td.description')
-    bugs.count.should > 0
-
-    last_description = ''
-    bugs.each do |bug|
-      bug_desc = bug.content.upcase
-      bug_desc.should >= last_description
-      last_description = bug_desc
-    end
+    modifier = lambda { |b| b.upcase }
+    check_bug_list_order('description.asc', 'td.description', true, modifier)
   end
 
   it 'should allow bugs to be sorted by description descending' do
-    doc = get_page_with_order('description.desc')
-    bugs = doc.css('td.description')
-    bugs.count.should > 0
-
-    last_description = '~' # Assumes description starts with char less than ~
-    bugs.each do |bug|
-      bug_desc = bug.content.upcase
-      bug_desc.should <= last_description
-      last_description = bug_desc
-    end
+    modifier = lambda { |b| b.upcase }
+    check_bug_list_order('description.desc', 'td.description', false, modifier)
   end
 
   it 'should allow bugs to be sorted by reported_by ascending' do
-    doc = get_page_with_order('reported_by.asc')
-    bugs = doc.css('td.reported_by')
-    bugs.count.should > 0
-
-    last_reported_by = ''
-    bugs.each do |bug|
-      bug.content.should >= last_reported_by
-      last_reported_by = bug.content
-    end
+    check_bug_list_order('reported_by.asc', 'td.reported_by', true, nil)
   end
 
   it 'should allow bugs to be sorted by reported_by descending' do
-    doc = get_page_with_order('reported_by.desc')
-    bugs = doc.css('td.reported_by')
-    bugs.count.should > 0
-
-    last_reported_by = '~'
-    bugs.each do |bug|
-      bug.content.should <= last_reported_by
-      last_reported_by = bug.content
-    end
+    check_bug_list_order('reported_by.desc', 'td.reported_by', false, nil)
   end
 
   it 'should allow bugs to be sorted by component ascending' do
-    doc = get_page_with_order('component.asc')
-    bugs = doc.css('td.component')
-    bugs.count.should > 0
-
-    last_component = ''
-    bugs.each do |bug|
-      bug.content.should >= last_component
-      last_component = bug.content
-    end
+    check_bug_list_order('component.asc', 'td.component', true, nil)
   end
 
   it 'should allow bugs to be sorted by component descending' do
-    doc = get_page_with_order('component.desc')
-    bugs = doc.css('td.component')
-    bugs.count.should > 0
-
-    last_component = '~'
-    bugs.each do |bug|
-      bug.content.should <= last_component
-      last_component = bug.content
-    end
+    check_bug_list_order('component.desc', 'td.component', false, nil)
   end
 
   it 'should allow bugs to be sorted by severity_name ascending' do
-    doc = get_page_with_order('severity.asc')
-    bugs = doc.css('td.severity_name')
-    bugs.count.should > 0
-
-    last_severity = ''
-    bugs.each do |bug|
-      bug.content.should >= last_severity
-      last_severity = bug.content
-    end
+    check_bug_list_order('severity.asc', 'td.severity_name', true, nil)
   end
 
   it 'should allow bugs to be sorted by severity descending' do
-    doc = get_page_with_order('severity.desc')
-    bugs = doc.css('td.severity_name')
-    bugs.count.should > 0
-
-    last_severity = '~'
-    bugs.each do |bug|
-      bug.content.should <= last_severity
-      last_severity = bug.content
-    end
+    check_bug_list_order('severity.desc', 'td.severity_name', false, nil)
   end
 
   it 'should allow bugs to be sorted by last_changed_by ascending' do
-    doc = get_page_with_order('last_changed_by.asc')
-    bugs = doc.css('td.last_changed_by')
-    bugs.count.should > 0
-
-    last_last_changed_by = ''
-    bugs.each do |bug|
-      bug.content.should >= last_last_changed_by
-      last_last_changed_by = bug.content
-    end
+    check_bug_list_order('last_changed_by.asc', 'td.last_changed_by', true, nil)
   end
 
   it 'should allow bugs to be sorted by last_changed_by descending' do
-    doc = get_page_with_order('last_changed_by.desc')
-    bugs = doc.css('td.last_changed_by')
-    bugs.count.should > 0
-
-    last_last_changed_by = '~'
-    bugs.each do |bug|
-      bug.content.should <= last_last_changed_by
-      last_last_changed_by = bug.content
-    end
+    check_bug_list_order('last_changed_by.desc', 'td.last_changed_by', false, nil)
   end
 
 end
