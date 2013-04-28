@@ -1,11 +1,21 @@
 require 'rubygems'
 require 'dm-core'
+require 'dm-migrations'
 
 # If you want the logs displayed you have to do this before the call to setup
 DataMapper::Logger.new($stdout, :debug)
+DataMapper::Model.raise_on_save_failure = true
 
 # A MySQL connection:
-DataMapper.setup(:default, Config::DB[:connection])
+if settings.environment == :test
+  puts "Using TEST environment with connection: #{Config::TEST[:connection]}"
+  DataMapper.setup(:default, Config::TEST[:connection])
+  adapter = DataMapper.repository(:default).adapter
+  adapter.execute('DROP VIEW IF EXISTS `bug_list_view`;')
+else
+  DataMapper.setup(:default, Config::DB[:connection])
+end
+
 
 class Bug
   include DataMapper::Resource
@@ -88,7 +98,7 @@ class Component1
 
   property :id, Serial, :required => true
   property :name, String, :length => 255, :required => true
-  property :is_default, Integer, :required => true, :field => 'isdefault'
+  property :is_default, Integer, :required => false, :field => 'isdefault'
 end
 
 class BugList
@@ -112,4 +122,38 @@ class BugList
   property :last_changed_by, String, :length => 255
 end
 
-DataMapper.finalize
+if settings.environment == :test
+  DataMapper.finalize.auto_migrate!
+  buglist_create_view_sql = <<EOF
+DROP TABLE `bug_list_view`;
+CREATE VIEW `bug_list_view` AS
+  SELECT `bug`.`id` AS `bug_id`,
+         `bug`.`commentcount` AS `comment_count`,
+         `current_state`.`id` AS `current_state_id`,
+         `current_state`.`name` AS `current_state_name`,
+         `current_severity`.`colour` AS `current_severity_colour`,
+         `bug`.`lastmodified` AS `last_changed`,
+         `bug`.`text` AS `description`,
+         `bug`.`user` AS `reported_by`,
+         `component1`.`id` AS `component_1_id`,
+         `component1`.`name` AS `component_1_name`,
+         `bug`.`currentcomponent2` AS `component_2`,
+         `current_severity`.`id` AS `current_severity_id`,
+         `current_severity`.`name` AS `current_severity_name`,
+         (SELECT `comment`.`user` FROM `comment`
+           WHERE (`comment`.`bugid` = `bug`.`id`)
+           ORDER BY `comment`.`submitted` DESC
+           LIMIT 1) AS `last_changed_by`
+    FROM `bug`
+         JOIN `state` `current_state`
+            ON (`current_state`.`id` = `bug`.`currentstate`)
+         JOIN `severity` `current_severity`
+            ON (`current_severity`.`id` = `bug`.`currentseverity`)
+         JOIN `component1`
+            ON (`component1`.`id` = `bug`.`currentcomponent1`);
+EOF
+  adapter = DataMapper.repository(:default).adapter
+  adapter.execute(buglist_create_view_sql)
+else
+  DataMapper.finalize
+end
