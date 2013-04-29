@@ -60,6 +60,56 @@ def create_test_bugs
             :last_modified => DateTime.now,
             :submitted => DateTime.now,
             :comment_count => 0
+          },
+          { :user => 'testuser',
+            :text => 'B. test description',
+            :current_state_id => 3,
+            :current_severity_id => 3,
+            :initial_severity_id => 1,
+            :current_component_1_id => 11,
+            :current_component_2 => 'turnipify',
+            :last_modified => DateTime.now,
+            :submitted => DateTime.now,
+            :comment_count => 1,
+            :comments => [{
+                         :comment_number => 1,
+                         :user => 'testcommenter',
+                         :text => 'A test comment',
+                         :new_state_id => '3',
+                         :old_severity_id => 1,
+                         :new_severity_id => 3,
+                         :old_component_1_id => 11,
+                         :new_component_1_id => nil,
+                         :old_component_2 => '',
+                         :new_component_2 => 'turnipify',
+                         :submitted => DateTime.now,
+                         :is_bugedit => false
+                         }]
+          },
+          { :user => 'testuser',
+            :text => 'C. test description',
+            :current_state_id => 3,
+            :current_severity_id => 3,
+            :initial_severity_id => 1,
+            :current_component_1_id => 9,
+            :current_component_2 => 'axify',
+            :last_modified => DateTime.now,
+            :submitted => DateTime.now,
+            :comment_count => 1,
+            :comments => [{
+                              :comment_number => 1,
+                              :user => 'testcommenter',
+                              :text => 'A test comment',
+                              :new_state_id => '3',
+                              :old_severity_id => 1,
+                              :new_severity_id => 3,
+                              :old_component_1_id => 10,
+                              :new_component_1_id => 9,
+                              :old_component_2 => '',
+                              :new_component_2 => 'axify',
+                              :submitted => DateTime.now,
+                              :is_bugedit => false
+                          }]
           }
          ]
   bugs.each { |item| Bug.create(item) }
