@@ -4,7 +4,7 @@ require File.dirname(__FILE__) + '/../../app.rb'
 require 'rspec'
 require 'rack/test'
 require 'nokogiri'
-require File.dirname(__FILE__) + '/spec_helper'
+require File.dirname(__FILE__) + '/../spec_helper'
 
 #set :environment, :test
 create_test_data
