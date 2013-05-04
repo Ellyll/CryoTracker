@@ -3,11 +3,13 @@ require 'dm-core'
 require 'dm-migrations'
 
 # If you want the logs displayed you have to do this before the call to setup
-DataMapper::Logger.new($stdout, :debug)
+#DataMapper::Logger.new($stdout, :debug)
+
+# Why on earth would you not want to do this?!
 DataMapper::Model.raise_on_save_failure = true
 
 # A MySQL connection:
-if settings.environment == :test
+if ((defined? settings) && settings.environment == :test) || ENV['RACK_ENV'] == 'test'
   puts "Using TEST environment with connection: #{Config::TEST[:connection]}"
   DataMapper.setup(:default, Config::TEST[:connection])
   adapter = DataMapper.repository(:default).adapter
@@ -60,7 +62,7 @@ class Comment
   property :old_component_2, String, :length=>255, :required => true, :field => 'oldcomponent2'
   property :new_component_2, String, :length=>255, :field => 'newcomponent2'
   property :submitted, DateTime, :required => true
-  property :is_bugedit?, Boolean, :required => true, :field => 'isbugedit'
+  property :is_bug_edit?, Boolean, :required => true, :field => 'isbugedit'
 
   belongs_to :bug, 'Bug'
   belongs_to :new_state, 'State'
@@ -122,7 +124,7 @@ class BugList
   property :last_changed_by, String, :length => 255
 end
 
-if settings.environment == :test
+if ((defined? settings) && settings.environment == :test) || ENV['RACK_ENV'] == 'test'
   DataMapper.finalize.auto_migrate!
   buglist_create_view_sql = <<EOF
 DROP TABLE `bug_list_view`;
