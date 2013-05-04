@@ -1,23 +1,8 @@
-ENV['RACK_ENV'] = 'test'
-#require_relative '../../app.rb'
-require File.dirname(__FILE__) + '/../../app.rb'
-require 'rspec'
-require 'rack/test'
-require 'nokogiri'
-require File.dirname(__FILE__) + '/../spec_helper'
-
-#set :environment, :test
-create_test_data
-
-def app
-  Sinatra::Application
-end
 
 describe 'The index route' do
   include Rack::Test::Methods
 
   def do_auth
-    #TODO: move to config
     authorize(Config::TEST[:test_user_username], Config::TEST[:test_user_password])
   end
 
