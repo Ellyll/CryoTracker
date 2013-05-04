@@ -69,7 +69,7 @@ def create_test_bugs
             :current_component_1_id => 11,
             :current_component_2 => 'turnipify',
             :last_modified => DateTime.now,
-            :submitted => DateTime.now,
+            :submitted => DateTime.now - 12,
             :comment_count => 1,
             :comments => [{
                          :comment_number => 1,
@@ -82,8 +82,8 @@ def create_test_bugs
                          :new_component_1_id => nil,
                          :old_component_2 => '',
                          :new_component_2 => 'turnipify',
-                         :submitted => DateTime.now,
-                         :is_bugedit => false
+                         :submitted => DateTime.now - 12,
+                         :is_bug_edit => false
                          }]
           },
           { :user => 'testuser',
@@ -93,8 +93,8 @@ def create_test_bugs
             :initial_severity_id => 1,
             :current_component_1_id => 9,
             :current_component_2 => 'axify',
-            :last_modified => DateTime.now,
-            :submitted => DateTime.now,
+            :last_modified => DateTime.now - 3,
+            :submitted => DateTime.now - 14,
             :comment_count => 1,
             :comments => [{
                               :comment_number => 1,
@@ -107,8 +107,33 @@ def create_test_bugs
                               :new_component_1_id => 9,
                               :old_component_2 => '',
                               :new_component_2 => 'axify',
-                              :submitted => DateTime.now,
-                              :is_bugedit => false
+                              :submitted => DateTime.now - 3,
+                              :is_bug_edit => false
+                          }]
+          },
+          { :user => 'testuser2',
+            :text => 'C. test description',
+            :current_state_id => 3,
+            :current_severity_id => 3,
+            :initial_severity_id => 1,
+            :current_component_1_id => 9,
+            :current_component_2 => 'axify',
+            :last_modified => DateTime.now - 3,
+            :submitted => DateTime.now - 14,
+            :comment_count => 1,
+            :comments => [{
+                              :comment_number => 1,
+                              :user => 'testcommenter',
+                              :text => 'A test comment',
+                              :new_state_id => '3',
+                              :old_severity_id => 1,
+                              :new_severity_id => 3,
+                              :old_component_1_id => 10,
+                              :new_component_1_id => 9,
+                              :old_component_2 => '',
+                              :new_component_2 => 'axify',
+                              :submitted => DateTime.now - 3,
+                              :is_bug_edit => false
                           }]
           }
          ]
