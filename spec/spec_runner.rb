@@ -1,13 +1,13 @@
 ENV['RACK_ENV'] = 'test'
 
 require 'rubygems'
-require 'app'
 require 'rspec'
 require 'rack/test'
 require 'nokogiri'
-require 'services/fixed_bugs_service'
+require_relative '../app'
+require_relative '../services/fixed_bugs_service'
 
-require 'spec/spec_helper'
+require_relative 'spec_helper'
 
 #set :environment, :test
 create_test_data
@@ -17,5 +17,5 @@ def app
 end
 
 # Specs:
-require 'spec/routes/index_spec'
-require 'spec/services/fixed_bugs_service_spec'
+require_relative 'routes/index_spec'
+require_relative 'services/fixed_bugs_service_spec'

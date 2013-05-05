@@ -1,9 +1,8 @@
 
-
-
-# @return BugListViewModelItem[]
+# @param bugs [Array<Bug>] A list of Bug objects
+# @return [Array<BugListViewModelItem>] A list of BugListViewModelItem objects
 def map_bug_list_to_view_model(bugs)
-  mapped_bugs = bugs.map do |bug|
+  bugs.map do |bug|
     item = BugListItemViewModel.new
     item.bug_id = bug.bug_id
     item.comment_count = bug.comment_count
@@ -20,8 +19,6 @@ def map_bug_list_to_view_model(bugs)
     item.last_changed_by = bug.last_changed_by
     item
   end
-
-  mapped_bugs
 end
 
 def get_order(order_param)
@@ -45,9 +42,7 @@ def get_order(order_param)
   }
   order = []
   if order_param
-    order_param.each do |column|
-      order.push(columns_available[column]) if columns_available.has_key?(column)
-    end
+    order.push(columns_available[order_param]) if columns_available.has_key?(order_param)
     order = order.flatten()
   end
   order = [:last_changed.desc] if order.count == 0
@@ -56,6 +51,7 @@ def get_order(order_param)
 end
 
 def get_states(state_param)
+  #noinspection RubyStringKeysInHashInspection
   states_available = {
                        'open' => [ 1, 2 ],
                        'new' => 1,
