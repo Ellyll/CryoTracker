@@ -2,10 +2,19 @@
 class AuthenticationService
 
   def initialize(user_files_dir)
+    unless defined?(user_files_dir) && !user_files_dir.nil?
+      raise(ArgumentError, 'must supply path to directory containing the user files')
+    end
+    unless File.directory?(user_files_dir)
+      raise(ArgumentError, 'path that was supplied was not a directory')
+    end
     @user_files_dir = user_files_dir
   end
 
   def is_authenticated?(username,password)
+    if username.nil? || password.nil?
+      return false
+    end
     unless username =~ /^[a-z0-9]+$/
       return false
     end
