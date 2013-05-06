@@ -18,4 +18,5 @@ end
 
 # Specs:
 require_relative 'routes/index_spec'
+require_relative 'services/authentication_service_spec'
 require_relative 'services/fixed_bugs_service_spec'
