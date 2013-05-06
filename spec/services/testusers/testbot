@@ -1,0 +1,209 @@
+mudobject "testbot" {
+flags LoggedIn Colour NewNews
+granted Tester
+mission Academy Bandits Canister Dove Eviction Grain HolyGrail Hospital Invincible Ionstorm Kazimierz Legion Medical Mercury Recover Rescue Rogue Silo Skinner Tea sim:Combat1
+string owner "level2_36"
+string $camefromdest "silo_16"
+string $headingfor "newsoton_2"
+string $killedby "@auto_003970"
+string $transaction.0.currency "currency_credit"
+string $transaction.0.note "Hospital charges"
+string $transaction.1.currency "currency_credit"
+string $transaction.1.note "Completion of the ^GCanister^n mission"
+string $transaction.2.currency "currency_credit"
+string $transaction.2.note "Hospital charges"
+string $transaction.3.currency "currency_credit"
+string $transaction.3.note "Completion of the ^GCanister^n mission"
+string $transaction.4.currency "currency_credit"
+string $transaction.4.note "Hospital charges"
+string $transaction.5.currency "currency_credit"
+string $transaction.5.note "Completion of the ^GRescue^n mission"
+string $transaction.6.currency "currency_credit"
+string $transaction.6.note "Completion of the ^GCleanup^n mission"
+string $transaction.7.currency "currency_credit"
+string $transaction.7.note "Completion of the ^GHolyGrail^n mission"
+string $transaction.8.currency "currency_credit"
+string $transaction.8.note "Completion of the ^GRescue^n mission"
+string $transaction.9.currency "currency_credit"
+string $transaction.9.note "Completion of the ^GKazimierz^n mission"
+string $transaction.10.currency "currency_credit"
+string $transaction.10.note "Completion of the ^GInvincible^n mission"
+string $transaction.11.currency "currency_credit"
+string $transaction.11.note "Completion of the ^GHolyGrail^n mission"
+string $transaction.12.currency "currency_credit"
+string $transaction.12.note "Hospital charges"
+string $transaction.13.currency "currency_credit"
+string $transaction.13.note "Completion of the ^GCanister^n mission"
+string $transaction.14.currency "currency_credit"
+string $transaction.14.note "Completion of the ^GHolyGrail^n mission"
+string $transaction.15.currency "currency_credit"
+string $transaction.15.note "Completion of the ^GInvincible^n mission"
+string $transaction.16.currency "currency_credit"
+string $transaction.16.note "Completion of the ^GRescue^n mission"
+string $transaction.17.currency "currency_credit"
+string $transaction.17.note "Completion of the ^GRescue^n mission"
+string $transaction.18.currency "currency_credit"
+string $transaction.18.note "Completion of the ^GSilo^n mission"
+string $transaction.19.currency "currency_credit"
+string $transaction.19.note "Completion of the ^GCanister^n mission"
+string colours "classic"
+string gender "m"
+string home "level1_1"
+string hostname "127.0.0.1"
+string name "^RTestBot^n"
+string nation "british"
+string password "JBMg3fRi73o3."
+string prompt.cmd "^RTestBot^r>"
+string reboothome "ocean_1"
+string short "testbot"
+string start "level2_36"
+string storage.original_home "@auto_003654_relay_zone"
+string title "Admiral ^pTestBot^n"
+string unreal_original_home "@auto_003936_sim_combat1"
+int $arrested 0
+int $balance 585610
+int $balance. 13605
+int $cash 0
+int $cash.euro 0
+int $cash.gbp 0
+int $cash.real 0
+int $cash.usd 0
+int $cash.virtual 0
+int $combat.deaths.real 64
+int $combat.kills.real 565
+int $combat.kills.sim 224
+int $health 86
+int $lastread.info/death.i 1336747673
+int $lastread.info/insurance.i 1336747673
+int $lastread.info/motd.i 1329066824
+int $lastread.info/news.i 1361378259
+int $life 177
+int $mission.combat1_zone.completed 1361283767
+int $mission.combat1_zone.time 78
+int $mission.mission_0.completed 1337156502
+int $mission.mission_0.time 57
+int $mission.mission_3.completed 1334836624
+int $mission.mission_3.time 203
+int $mission.mission_6.completed 1340558366
+int $mission.mission_6.time 13
+int $mission.mission_7.completed 1339332811
+int $mission.mission_7.time 27
+int $mission.mission_8.completed 1333888260
+int $mission.mission_8.time 4
+int $mission.mission_9.completed 1362658327
+int $mission.mission_9.time 169
+int $mission.mission_10.completed 1361214219
+int $mission.mission_10.time 59
+int $mission.mission_12.completed 1362663001
+int $mission.mission_12.time 152
+int $mission.mission_13.completed 1333655012
+int $mission.mission_13.time 1
+int $mission.mission_14.completed 1340541102
+int $mission.mission_14.time 188
+int $mission.mission_15.completed 1333899455
+int $mission.mission_15.time 235
+int $mission.mission_17.completed 1337170354
+int $mission.mission_17.time 67
+int $mission.mission_19.completed 1362674857
+int $mission.mission_19.time 239
+int $mission.mission_22.completed 1334853274
+int $mission.mission_22.time 370
+int $mission.mission_24.completed 1362685397
+int $mission.mission_24.time 224
+int $mission.mission_25.completed 1340548797
+int $mission.mission_25.time 35
+int $mission.mission_27.completed 1340370843
+int $mission.mission_27.time 82
+int $mission.mission_29.completed 1361658838
+int $mission.mission_29.time 292
+int $mission.mission_30.completed 1337166147
+int $mission.mission_30.time 124
+int $mission.mission_medical.completed 1332600546
+int $mission.mission_medical.time 207
+int $mission.relay_zone.completed 1361216776
+int $mission.relay_zone.time 57
+int $mission.sim_combat1.completed 1334768837
+int $mission.sim_combat1.time 126
+int $strength 200
+int $transaction.0.amount -100
+int $transaction.0.balance 3400
+int $transaction.0.when 1363275931
+int $transaction.1.amount 400
+int $transaction.1.balance 3800
+int $transaction.1.when 1363275968
+int $transaction.2.amount -100
+int $transaction.2.balance 3700
+int $transaction.2.when 1363276013
+int $transaction.3.amount 400
+int $transaction.3.balance 4100
+int $transaction.3.when 1363276053
+int $transaction.4.amount -400
+int $transaction.4.balance 3700
+int $transaction.4.when 1363277129
+int $transaction.5.amount 800
+int $transaction.5.balance 4500
+int $transaction.5.when 1363279363
+int $transaction.6.amount 400
+int $transaction.6.balance 4900
+int $transaction.6.when 1363280323
+int $transaction.7.amount 1000
+int $transaction.7.balance 5900
+int $transaction.7.when 1363280366
+int $transaction.8.amount 800
+int $transaction.8.balance 6700
+int $transaction.8.when 1363281641
+int $transaction.9.amount 600
+int $transaction.9.balance 7300
+int $transaction.9.when 1363284246
+int $transaction.10.amount 600
+int $transaction.10.balance 7900
+int $transaction.10.when 1363284398
+int $transaction.11.amount 1000
+int $transaction.11.balance 8900
+int $transaction.11.when 1363343924
+int $transaction.12.amount -95
+int $transaction.12.balance 8805
+int $transaction.12.when 1363343926
+int $transaction.13.amount 400
+int $transaction.13.balance 9205
+int $transaction.13.when 1363343954
+int $transaction.14.amount 1000
+int $transaction.14.balance 10205
+int $transaction.14.when 1363344552
+int $transaction.15.amount 600
+int $transaction.15.balance 10805
+int $transaction.15.when 1363344699
+int $transaction.16.amount 800
+int $transaction.16.balance 11605
+int $transaction.16.when 1363352231
+int $transaction.17.amount 800
+int $transaction.17.balance 12405
+int $transaction.17.when 1363512906
+int $transaction.18.amount 1200
+int $transaction.18.balance 13605
+int $transaction.18.when 1363513055
+int $transaction.19.amount 400
+int $transaction.19.balance 3500
+int $transaction.19.when 1363275889
+int $transaction.count 20
+int $transaction.last 18
+int _ticket 14
+int created 1329066826
+int eq.count 0
+int health.max 200
+int invis 0
+int lastlogin 1363513055
+int lastnewstuff 1363513055
+int laston 1363513055
+int level 20
+int logincount 1850
+int maxload 100000000
+int maxstrength 200
+int needredo 0
+int pockets 9999
+int privs 9997
+int q.count 0
+int skill.combat 186
+int style 2
+int timeon 269998
+}
