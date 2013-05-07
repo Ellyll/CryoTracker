@@ -1,22 +1,20 @@
+require 'rack/test'
+require 'rspec'
 
-describe 'The index route' do
+
+describe 'GET /index' do
   include Rack::Test::Methods
 
   def do_auth
     authorize(Config::TEST[:test_user_username], Config::TEST[:test_user_password])
   end
 
-  def get_page_with_order(order)
-    do_auth
-    get "/?order=#{order}"
-
-    Nokogiri::HTML(last_response.body)
-  end
-
-  def check_bug_list_order(order, css_selector, is_ascending, content_modifier)
-    doc = get_page_with_order(order)
+  def check_bugs_table_is_sorted(body, css_selector, is_ascending, content_modifier)
+    doc = Nokogiri::HTML(body)
     bugs = doc.css(css_selector).map {|b| b.content}
     bugs.count.should > 0
+
+    is_sorted = true
 
     if content_modifier
       bugs = bugs.map { |b| content_modifier.call(b) }
@@ -28,93 +26,73 @@ describe 'The index route' do
     last_value = is_ascending ? min_value : max_value
     bugs.each do |bug|
       if is_ascending
-        bug.should >= last_value
+        expect(bug).to be >= last_value
+        is_sorted = false unless bug >= last_value
       else
-        bug.should <= last_value
+        expect(bug).to be <= last_value
+        is_sorted = false unless bug <= last_value
       end
       last_value = bug
     end
+
+    is_sorted
   end
 
-
-  it 'should not allow unathorised access' do
-    get '/'
-    last_response.status.should == 401 # Unauthorised
+  context 'when not given login credentials' do
+    it 'responds with status 401 (Unauthorised)' do
+      get '/'
+      expect(last_response.status).to eq(401) # Unauthorised
+    end
   end
 
-  it 'should load the home page' do
-    do_auth
-    get '/'
-
-    last_response.should be_ok
+  context 'when given invalid login credentials' do
+    it 'responds with status 401 (Unauthorised)' do
+      authorize('not_a_real_user', 'not_a_valid_password')
+      get '/'
+      expect(last_response.status).to eq(401) # Unauthorised
+    end
   end
 
-  it 'should allow bugs to be sorted by id ascending' do
-    modifier = lambda { |b| b.delete('*').to_i }
-    check_bug_list_order('bug_id.asc', 'td.bug_id', true, modifier)
-  end
+  context 'when given valid login credentials' do
+    before(:each) { do_auth }
 
-  it 'should allow bugs to be sorted by id descending' do
-    modifier = lambda { |b| b.delete('*').to_i }
-    check_bug_list_order('bug_id.desc', 'td.bug_id', false, modifier)
-  end
+    context 'without any parameters, the response' do
+      before { get '/' }
+      subject { last_response }
+      it { should be_ok }
+      its(:status) { should eq(200) }
+    end
 
-  it 'should allow bugs to be sorted by state_name ascending' do
-    check_bug_list_order('state.asc', 'td.state_name', true, nil)
-  end
+    context 'with a sort parameter' do
+      sort_param = {
+                    :bug_id       => { :css_class => 'td.bug_id', :modifier =>  lambda { |b| b.delete('*').to_i } },
+                    :state        => { :css_class => 'td.state_name' },
+                    :last_changed => { :css_class => 'td.last_changed' },
+                    :description  => { :css_class => 'td.description', :modifier => lambda { |b| b.upcase } },
+                    :reported_by  => { :css_class => 'td.reported_by' },
+                    :component    => { :css_class => 'td.component' },
+                    :severity     => { :css_class => 'td.severity_name' },
+                    :last_changed_by => { :css_class => 'td.last_changed_by' }
+                   }
 
-  it 'should allow bugs to be sorted by state_name descending' do
-    check_bug_list_order('state.desc', 'td.state_name', false, nil)
+      direction = { :asc => true, :desc => false }
+      sort_param.each do |column,param|
+        context "#{column}" do
+          direction.each do |dir,ascending|
+            context "#{dir.to_s}" do
+              subject(:response) do
+                get "/?order=#{column}.#{dir.to_s}"
+                last_response
+              end
+              it { should be_ok }
+              its(:status) { should eq(200) }
+              it 'be sorted' do
+                check_bugs_table_is_sorted(response.body, param[:css_class], ascending, param[:modifier])
+              end
+            end
+          end
+        end
+      end
+    end
   end
-
-  it 'should allow bugs to be sorted by last_changed ascending' do
-    check_bug_list_order('last_changed.asc', 'td.last_changed', true, nil)
-  end
-
-  it 'should allow bugs to be sorted by last_changed descending' do
-    check_bug_list_order('last_changed.desc', 'td.last_changed', false, nil)
-  end
-
-  it 'should allow bugs to be sorted by description ascending' do
-    modifier = lambda { |b| b.upcase }
-    check_bug_list_order('description.asc', 'td.description', true, modifier)
-  end
-
-  it 'should allow bugs to be sorted by description descending' do
-    modifier = lambda { |b| b.upcase }
-    check_bug_list_order('description.desc', 'td.description', false, modifier)
-  end
-
-  it 'should allow bugs to be sorted by reported_by ascending' do
-    check_bug_list_order('reported_by.asc', 'td.reported_by', true, nil)
-  end
-
-  it 'should allow bugs to be sorted by reported_by descending' do
-    check_bug_list_order('reported_by.desc', 'td.reported_by', false, nil)
-  end
-
-  it 'should allow bugs to be sorted by component ascending' do
-    check_bug_list_order('component.asc', 'td.component', true, nil)
-  end
-
-  it 'should allow bugs to be sorted by component descending' do
-    check_bug_list_order('component.desc', 'td.component', false, nil)
-  end
-
-  it 'should allow bugs to be sorted by severity_name ascending' do
-    check_bug_list_order('severity.asc', 'td.severity_name', true, nil)
-  end
-
-  it 'should allow bugs to be sorted by severity descending' do
-    check_bug_list_order('severity.desc', 'td.severity_name', false, nil)
-  end
-
-  it 'should allow bugs to be sorted by last_changed_by ascending' do
-    check_bug_list_order('last_changed_by.asc', 'td.last_changed_by', true, nil)
-  end
-
-  it 'should allow bugs to be sorted by last_changed_by descending' do
-    check_bug_list_order('last_changed_by.desc', 'td.last_changed_by', false, nil)
-  end
-
 end
