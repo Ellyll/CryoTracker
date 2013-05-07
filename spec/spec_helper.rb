@@ -135,7 +135,62 @@ def create_test_bugs
                               :submitted => DateTime.now - 3,
                               :is_bug_edit => false
                           }]
-          }
+          },
+          { :user => 'testuser',
+            :text => 'A. test description',
+            :current_state_id => 2,
+            :current_severity_id => 2,
+            :initial_severity_id => 2,
+            :current_component_1_id => 5,
+            :current_component_2 => '',
+            :last_modified => DateTime.now - 3,
+            :submitted => DateTime.now - 3,
+            :comment_count => 0
+          },
+          { :user => 'testuser',
+            :text => 'A. test description',
+            :current_state_id => 3,
+            :current_severity_id => 2,
+            :initial_severity_id => 2,
+            :current_component_1_id => 5,
+            :current_component_2 => '',
+            :last_modified => DateTime.now,
+            :submitted => DateTime.now,
+            :comment_count => 0
+          },
+          { :user => 'testuser',
+            :text => 'A. test description',
+            :current_state_id => 4,
+            :current_severity_id => 2,
+            :initial_severity_id => 2,
+            :current_component_1_id => 5,
+            :current_component_2 => '',
+            :last_modified => DateTime.now,
+            :submitted => DateTime.now,
+            :comment_count => 0
+          },
+          { :user => 'testuser',
+            :text => 'A. test description',
+            :current_state_id => 5,
+            :current_severity_id => 2,
+            :initial_severity_id => 2,
+            :current_component_1_id => 5,
+            :current_component_2 => '',
+            :last_modified => DateTime.now,
+            :submitted => DateTime.now,
+            :comment_count => 0
+          },
+          { :user => 'testuser',
+            :text => 'A. test description',
+            :current_state_id => 6,
+            :current_severity_id => 2,
+            :initial_severity_id => 2,
+            :current_component_1_id => 5,
+            :current_component_2 => '',
+            :last_modified => DateTime.now,
+            :submitted => DateTime.now,
+            :comment_count => 0
+          },
          ]
   bugs.each { |item| Bug.create(item) }
 end
