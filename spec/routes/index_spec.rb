@@ -38,6 +38,12 @@ describe 'GET /index' do
     is_sorted
   end
 
+  def get_state_names_from_body(body)
+    doc = Nokogiri::HTML(body)
+    #puts "body: #{body}"
+    doc.css('td.state_name').map {|b| b.content}
+  end
+
   context 'when not given login credentials' do
     it 'responds with status 401 (Unauthorised)' do
       get '/'
@@ -61,6 +67,7 @@ describe 'GET /index' do
       subject { last_response }
       it { should be_ok }
       its(:status) { should eq(200) }
+      #TODO: Confirm default sort/filter behaviour
     end
 
     context 'with a sort parameter' do
@@ -94,5 +101,36 @@ describe 'GET /index' do
         end
       end
     end
+
+    context 'with a state parameter' do
+      states = {
+                :open => %w(new open),
+                :new => %w(new),
+                :confirmed => %w(open),
+                :closed => %w(fixed verified),
+                :verified => %w(verified),
+                :unverified => %w(fixed),
+                :unbugs => %w(held notabug),
+                :held => %w(held),
+                :notabug => %w(notabug)
+              }
+      states.each do |name, allowed_state_names|
+        context "#{name}" do
+          subject(:response) do
+            get "/?state=#{name.to_s}"
+            last_response
+          end
+          it { should be_ok }
+          its(:status) { should eq(200) }
+          it "only allows states of #{allowed_state_names.to_s}" do
+            state_names = get_state_names_from_body(response.body)
+            expect(state_names).to_not be_empty # must have some test data with allowed state names
+            invalid_state_names = state_names.select { |state| !allowed_state_names.include?(state) }
+            expect(invalid_state_names).to be_empty
+          end
+        end
+      end
+    end
+
   end
 end
