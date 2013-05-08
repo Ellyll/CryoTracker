@@ -1,12 +1,4 @@
 
-class BugStub
-  attr_accessor :current_state_id, :last_modified
-  def initialize(current_state_id, last_modified)
-    @current_state_id = current_state_id
-    @last_modified = last_modified
-  end
-end
-
 describe FixedBugsService do
   describe '#get_recently_fixed_bugs' do
     context 'when given a number of days > 0' do
