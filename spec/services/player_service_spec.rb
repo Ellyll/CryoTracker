@@ -5,6 +5,7 @@ describe PlayerService do
   describe '#initialize' do
     context 'when not given a directory path' do
       it 'raises an ArgumentError' do
+        #noinspection RubyArgCount
         expect { PlayerService.new }.to raise_error(ArgumentError)
         expect { PlayerService.new(nil) }.to raise_error(ArgumentError)
       end
@@ -49,6 +50,34 @@ describe PlayerService do
         expect(flags.class).to eq(Set) # Expect returned flags to be a Set
         expect(flags).to eq(expected_flags)
       end
+    end
+  end
+
+  describe '#get_email' do
+    player_service = PlayerService.new(File.dirname(__FILE__) + '/testusers')
+    context 'when given a non-existant username' do
+      it 'raises a SystemCallError' do
+        expect { player_service.get_email('non_existant_user') }.to raise_error(ArgumentError)
+      end
+    end
+    context 'when given a valid username' do
+      it "returns the player's email address when it's defined" do
+        email = player_service.get_email('testbot')
+        expect(email).to eq('testbot@cryosphere.net')
+      end
+      it "returns nil when the player's email address is not defined" do
+        email = player_service.get_email('testbot2')
+        expect(email).to be_nil
+      end
+    end
+  end
+
+  describe '#get_filename' do
+    it 'returns the filename for the given username' do
+      player_service = PlayerService.new(File.dirname(__FILE__) + '/testusers')
+      filename = player_service.send(:get_filename, 'testbot') # workaround for private method
+      expected_filename = File.dirname(__FILE__) + '/testusers/testbot'
+      expect(filename).to eq(expected_filename)
     end
   end
 end

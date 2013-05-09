@@ -1,4 +1,4 @@
-mudobject "testbot" {
+mudobject "testbot2" {
 flags LoggedIn Colour NewNews
 granted Tester
 mission Academy Bandits Canister Dove Eviction Grain HolyGrail Hospital Invincible Ionstorm Kazimierz Legion Medical Mercury Recover Rescue Rogue Silo Skinner Tea sim:Combat1
@@ -47,7 +47,6 @@ string $transaction.18.note "Completion of the ^GSilo^n mission"
 string $transaction.19.currency "currency_credit"
 string $transaction.19.note "Completion of the ^GCanister^n mission"
 string colours "classic"
-string finger.email "testbot@cryosphere.net"
 string gender "m"
 string home "level1_1"
 string hostname "127.0.0.1"

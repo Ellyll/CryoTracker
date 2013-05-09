@@ -25,6 +25,22 @@ class PlayerService
     flags
   end
 
+  def get_email(username)
+    validate_username(username)
+
+    email = nil
+    file = File.new(get_filename(username), 'r')
+    while (line = file.gets)
+      if line =~ /^string finger.email ".+"$/
+        email = line.sub(/^string finger.email "(.+)"$/,'\1').chomp
+        break
+      end
+    end
+    file.close
+
+    email
+  end
+
   private
 
   def validate_username(username)
