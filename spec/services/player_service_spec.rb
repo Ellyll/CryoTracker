@@ -72,6 +72,36 @@ describe PlayerService do
     end
   end
 
+  describe '#see_bugs?' do
+    player_service = PlayerService.new(File.dirname(__FILE__) + '/testusers')
+    context 'when given a valid username' do
+      context 'when player has level >= 23 and does not have the SeeBugs pflag denied' do
+        it 'returns true' do
+          expect( player_service.see_bugs?('testbotseebugs1') ).to be_true
+        end
+      end
+      context 'when player has level >= 23 and has the SeeBugs pflag denied' do
+        it 'returns false' do
+          expect( player_service.see_bugs?('testbotseebugs2') ).to_not be_nil
+          expect( player_service.see_bugs?('testbotseebugs2') ).to be_false
+        end
+      end
+      context 'when player has level < 23 and does not have the SeeBugs pflag granted' do
+        it 'returns false' do
+          expect( player_service.see_bugs?('testbotseebugs3') ).to_not be_nil
+          expect( player_service.see_bugs?('testbotseebugs3') ).to be_false
+        end
+      end
+      context 'when player has level < 23 and has the SeeBugs pflag granted' do
+        it 'returns true' do
+          expect( player_service.see_bugs?('testbotseebugs4') ).to be_true
+        end
+      end
+    end
+  end
+
+  # private methods specs
+
   describe '#get_filename' do
     it 'returns the filename for the given username' do
       player_service = PlayerService.new(File.dirname(__FILE__) + '/testusers')
@@ -80,4 +110,45 @@ describe PlayerService do
       expect(filename).to eq(expected_filename)
     end
   end
+
+  describe '#get_int_value' do
+    it 'returns the value for an int attribute' do
+      player_service = PlayerService.new(File.dirname(__FILE__) + '/testusers')
+      int_value = player_service.send(:get_int_value, 'privs', 'testbot')
+      expect(int_value).to eq(9997)
+    end
+  end
+
+  describe '#get_granted_flags' do
+    it 'returns any "granted" pflags' do
+      player_service = PlayerService.new(File.dirname(__FILE__) + '/testusers')
+      granted = player_service.send(:get_granted_flags, 'testbotseebugs4')
+      expected = Set.new %w(Tester SeeBugs)
+      expect(granted).to eq(expected)
+    end
+  end
+
+  describe '#get_withheld_flags' do
+    it 'returns any "withheld" pflags' do
+      player_service = PlayerService.new(File.dirname(__FILE__) + '/testusers')
+      withheld = player_service.send(:get_withheld_flags, 'testbotseebugs2')
+      expected = Set.new %w(SeeBugs)
+      expect(withheld).to eq(expected)
+    end
+  end
+
+  describe '#get_permission_level' do
+    it 'returns the int value of the effective permission when player has privs set' do
+      player_service = PlayerService.new(File.dirname(__FILE__) + '/testusers')
+      level = player_service.send(:get_permission_level, 'testbot')
+      expect(level).to eq(9997)
+    end
+    it "returns the int value of the effective permission when player doesn't have privs set" do
+      player_service = PlayerService.new(File.dirname(__FILE__) + '/testusers')
+      level = player_service.send(:get_permission_level, 'testbotseebugs4')
+      expect(level).to eq(20)
+    end
+
+  end
+
 end
