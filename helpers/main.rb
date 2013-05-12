@@ -10,7 +10,12 @@ helpers do
   end
 
   def authorised?
-    as = AuthenticationService.new(Config::AUTHENTICATION[:user_files_directory])
+    if ((defined? settings) && settings.environment == :test) || ENV['RACK_ENV'] == 'test'
+      user_files_directory = Config::TEST[:user_files_directory]
+    else
+      user_files_directory = Config::AUTHENTICATION[:user_files_directory]
+    end
+    as = AuthenticationService.new(user_files_directory)
     @auth ||=  Rack::Auth::Basic::Request.new(request.env)
     if @auth.provided? && @auth.basic? && @auth.credentials
       username = @auth.credentials[0]
