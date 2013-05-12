@@ -70,6 +70,13 @@ describe 'GET /index' do
       #TODO: Confirm default sort/filter behaviour
     end
 
+    context 'without a sort parameter' do
+      it 'will be sorted by last_changed' do
+        get '/'
+        check_bugs_table_is_sorted(last_response.body, 'td.last_changed', false, nil)
+      end
+    end
+
     context 'with a sort parameter' do
       sort_param = {
                     :bug_id       => { :css_class => 'td.bug_id', :modifier =>  lambda { |b| b.delete('*').to_i } },
@@ -102,6 +109,17 @@ describe 'GET /index' do
       end
     end
 
+    context 'without a state parameter' do
+      it 'shows only bugs with a states of "open" or "new"' do
+        get '/'
+        state_names = Set.new(get_state_names_from_body(last_response.body))
+        expect(state_names).to_not be_empty # must have some test data with allowed state names
+        allowed_state_names = Set.new(%w(new open))
+        invalid_state_names = state_names - allowed_state_names
+        expect(invalid_state_names).to be_empty
+      end
+    end
+
     context 'with a state parameter' do
       states = {
                 :open => %w(new open),
@@ -122,7 +140,7 @@ describe 'GET /index' do
           end
           it { should be_ok }
           its(:status) { should eq(200) }
-          it "only allows states of #{allowed_state_names.to_s}" do
+          it "only shows bugs with states of #{allowed_state_names.to_s}" do
             state_names = get_state_names_from_body(response.body)
             expect(state_names).to_not be_empty # must have some test data with allowed state names
             invalid_state_names = state_names.select { |state| !allowed_state_names.include?(state) }
