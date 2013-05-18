@@ -18,6 +18,40 @@ describe PlayerService do
     end
   end
 
+  describe '#get_player' do
+    player_service = PlayerService.new(File.dirname(__FILE__) + '/testusers')
+
+    context 'when not given a username' do
+      it 'raises an ArgumentError' do
+        #noinspection RubyArgCount
+        expect { player_service.get_player() }.to raise_error(ArgumentError)
+      end
+    end
+
+    context 'when given a nil username' do
+      it 'raises an ArgumentError' do
+        expect { player_service.get_player(nil) }.to raise_error(ArgumentError)
+      end
+    end
+
+    context 'when given a non-existant username' do
+      it 'raises a SystemCallError' do
+        expect { player_service.get_player('non_existant_user') }.to raise_error(ArgumentError)
+      end
+    end
+    context 'when given a valid username' do
+      it 'return a player object for the player with that username' do
+        player = player_service.get_player('testbot')
+
+        expect(player.class).to eq(Player)
+        expect(player.username).to eq('testbot')
+        expect(player.email_address).to eq('testbot@cryosphere.net')
+        expect(player).to_not be_banned
+        expect(player).to be_able_to_see_others_bugs
+      end
+    end
+  end
+
   describe '#get_flags' do
     player_service = PlayerService.new(File.dirname(__FILE__) + '/testusers')
 
@@ -101,6 +135,19 @@ describe PlayerService do
   end
 
   # private methods specs
+
+  describe '#banned?' do
+    player_service = PlayerService.new(File.dirname(__FILE__) + '/testusers')
+
+    it 'returns true if player is banned' do
+      banned = player_service.send(:banned?, 'testbotbugbanned')
+      expect(banned).to be_true
+    end
+    it 'returns false if player is not banned' do
+      banned = player_service.send(:banned?, 'testbot')
+      expect(banned).to be_false
+    end
+  end
 
   describe '#get_filename' do
     it 'returns the filename for the given username' do

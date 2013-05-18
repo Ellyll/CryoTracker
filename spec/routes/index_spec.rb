@@ -60,18 +60,29 @@ describe 'GET /index' do
   end
 
   context 'when given valid login credentials' do
-    before(:each) { do_auth }
+
+    context 'and user is banned' do
+      before do
+        authorize('testbotbugbanned', 'mmmhufenia')
+        get '/'
+      end
+      subject { last_response }
+      its(:status) { should eq(403) } # Forbidden
+    end
+
+
+    it 'will allow users with see_all_bugs? false to see only their own bugs'
 
     context 'without any parameters, the response' do
-      before { get '/' }
+      before { do_auth; get '/' }
       subject { last_response }
       it { should be_ok }
       its(:status) { should eq(200) }
-      #TODO: Confirm default sort/filter behaviour
     end
 
     context 'without a sort parameter' do
       it 'will be sorted by last_changed' do
+        do_auth
         get '/'
         check_bugs_table_is_sorted(last_response.body, 'td.last_changed', false, nil)
       end
@@ -95,6 +106,7 @@ describe 'GET /index' do
           direction.each do |dir,ascending|
             context "#{dir.to_s}" do
               subject(:response) do
+                do_auth
                 get "/?order=#{column}.#{dir.to_s}"
                 last_response
               end
@@ -111,6 +123,7 @@ describe 'GET /index' do
 
     context 'without a state parameter' do
       it 'shows only bugs with a states of "open" or "new"' do
+        do_auth
         get '/'
         state_names = Set.new(get_state_names_from_body(last_response.body))
         expect(state_names).to_not be_empty # must have some test data with allowed state names
@@ -135,6 +148,7 @@ describe 'GET /index' do
       states.each do |name, allowed_state_names|
         context "#{name}" do
           subject(:response) do
+            do_auth
             get "/?state=#{name.to_s}"
             last_response
           end

@@ -1,3 +1,5 @@
+require_relative '../models/player'
+
 class PlayerService
   def initialize(user_files_dir)
     unless defined?(user_files_dir) && !user_files_dir.nil?
@@ -7,6 +9,18 @@ class PlayerService
       raise(ArgumentError, 'path that was supplied was not a directory')
     end
     @user_files_dir = user_files_dir
+  end
+
+  def get_player(username)
+    validate_username(username)
+
+    player = Player.new
+    player.username = username
+    player.email_address = get_email(username)
+    player.banned = banned?(username)
+    player.able_to_see_others_bugs = see_bugs?(username)
+
+    player
   end
 
   def get_flags(username)
@@ -48,6 +62,10 @@ class PlayerService
   end
 
   private
+
+  def banned?(username)
+    get_flags(username).include?('BugBanned')
+  end
 
   def validate_username(username)
     raise(ArgumentError, 'Must supply username') if username.nil?

@@ -7,6 +7,10 @@ helpers do
       response['WWW-Authenticate'] = "Basic realm=\"#{Config::APP[:name]}\""
       throw(:halt, [401, "Not authorised\n"])
     end
+
+    if banned?
+      throw(:halt, [403, "Forbidden (Banned)\n"])
+    end
   end
 
   def authorised?
@@ -23,6 +27,21 @@ helpers do
       return as.is_authenticated?(username, password)
     end
     false
+  end
+
+  def banned?
+    if ((defined? settings) && settings.environment == :test) || ENV['RACK_ENV'] == 'test'
+      user_files_directory = Config::TEST[:user_files_directory]
+    else
+      user_files_directory = Config::AUTHENTICATION[:user_files_directory]
+    end
+
+    username = @auth.credentials[0]
+
+    player_service = PlayerService.new(user_files_directory)
+    player = player_service.get_player(username)
+
+    player.banned?
   end
 
   def get_page(page_param)
