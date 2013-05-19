@@ -3,23 +3,19 @@ require_relative '../../services/player_service'
 
 describe PlayerService do
   describe '#initialize' do
-    context 'when not given a directory path' do
+    context 'when not given a player data service' do
       it 'raises an ArgumentError' do
         #noinspection RubyArgCount
         expect { PlayerService.new }.to raise_error(ArgumentError)
         expect { PlayerService.new(nil) }.to raise_error(ArgumentError)
       end
     end
-    context 'when given a directory path that is not a directory' do
-      it 'raises an ArgumentError' do
-        filename = File.dirname(__FILE__) + '/non_existant_directory'
-        expect { PlayerService.new(filename) }.to raise_error(ArgumentError)
-      end
-    end
   end
 
   describe '#get_player' do
-    player_service = PlayerService.new(File.dirname(__FILE__) + '/testusers')
+
+    player_data_service = PlayerDataService.new(File.dirname(__FILE__) + '/testusers')
+    player_service = PlayerService.new(player_data_service)
 
     context 'when not given a username' do
       it 'raises an ArgumentError' do
@@ -53,7 +49,8 @@ describe PlayerService do
   end
 
   describe '#get_flags' do
-    player_service = PlayerService.new(File.dirname(__FILE__) + '/testusers')
+    player_data_service = PlayerDataService.new(File.dirname(__FILE__) + '/testusers')
+    player_service = PlayerService.new(player_data_service)
 
     context 'when not given a username' do
       it 'raises an ArgumentError' do
@@ -88,9 +85,11 @@ describe PlayerService do
   end
 
   describe '#get_email' do
-    player_service = PlayerService.new(File.dirname(__FILE__) + '/testusers')
+    player_data_service = PlayerDataService.new(File.dirname(__FILE__) + '/testusers')
+    player_service = PlayerService.new(player_data_service)
+
     context 'when given a non-existant username' do
-      it 'raises a SystemCallError' do
+      it 'raises an ArgumentError' do
         expect { player_service.get_email('non_existant_user') }.to raise_error(ArgumentError)
       end
     end
@@ -107,7 +106,9 @@ describe PlayerService do
   end
 
   describe '#see_bugs?' do
-    player_service = PlayerService.new(File.dirname(__FILE__) + '/testusers')
+    player_data_service = PlayerDataService.new(File.dirname(__FILE__) + '/testusers')
+    player_service = PlayerService.new(player_data_service)
+
     context 'when given a valid username' do
       context 'when player has level >= 23 and does not have the SeeBugs pflag denied' do
         it 'returns true' do
@@ -137,7 +138,8 @@ describe PlayerService do
   # private methods specs
 
   describe '#banned?' do
-    player_service = PlayerService.new(File.dirname(__FILE__) + '/testusers')
+    player_data_service = PlayerDataService.new(File.dirname(__FILE__) + '/testusers')
+    player_service = PlayerService.new(player_data_service)
 
     it 'returns true if player is banned' do
       banned = player_service.send(:banned?, 'testbotbugbanned')
@@ -149,18 +151,11 @@ describe PlayerService do
     end
   end
 
-  describe '#get_filename' do
-    it 'returns the filename for the given username' do
-      player_service = PlayerService.new(File.dirname(__FILE__) + '/testusers')
-      filename = player_service.send(:get_filename, 'testbot') # workaround for private method
-      expected_filename = File.dirname(__FILE__) + '/testusers/testbot'
-      expect(filename).to eq(expected_filename)
-    end
-  end
-
   describe '#get_int_value' do
     it 'returns the value for an int attribute' do
-      player_service = PlayerService.new(File.dirname(__FILE__) + '/testusers')
+      player_data_service = PlayerDataService.new(File.dirname(__FILE__) + '/testusers')
+      player_service = PlayerService.new(player_data_service)
+
       int_value = player_service.send(:get_int_value, 'privs', 'testbot')
       expect(int_value).to eq(9997)
     end
@@ -168,7 +163,9 @@ describe PlayerService do
 
   describe '#get_granted_flags' do
     it 'returns any "granted" pflags' do
-      player_service = PlayerService.new(File.dirname(__FILE__) + '/testusers')
+      player_data_service = PlayerDataService.new(File.dirname(__FILE__) + '/testusers')
+      player_service = PlayerService.new(player_data_service)
+
       granted = player_service.send(:get_granted_flags, 'testbotseebugs4')
       expected = Set.new %w(Tester SeeBugs)
       expect(granted).to eq(expected)
@@ -177,7 +174,9 @@ describe PlayerService do
 
   describe '#get_withheld_flags' do
     it 'returns any "withheld" pflags' do
-      player_service = PlayerService.new(File.dirname(__FILE__) + '/testusers')
+      player_data_service = PlayerDataService.new(File.dirname(__FILE__) + '/testusers')
+      player_service = PlayerService.new(player_data_service)
+
       withheld = player_service.send(:get_withheld_flags, 'testbotseebugs2')
       expected = Set.new %w(SeeBugs)
       expect(withheld).to eq(expected)
@@ -186,12 +185,16 @@ describe PlayerService do
 
   describe '#get_permission_level' do
     it 'returns the int value of the effective permission when player has privs set' do
-      player_service = PlayerService.new(File.dirname(__FILE__) + '/testusers')
+      player_data_service = PlayerDataService.new(File.dirname(__FILE__) + '/testusers')
+      player_service = PlayerService.new(player_data_service)
+
       level = player_service.send(:get_permission_level, 'testbot')
       expect(level).to eq(9997)
     end
     it "returns the int value of the effective permission when player doesn't have privs set" do
-      player_service = PlayerService.new(File.dirname(__FILE__) + '/testusers')
+      player_data_service = PlayerDataService.new(File.dirname(__FILE__) + '/testusers')
+      player_service = PlayerService.new(player_data_service)
+
       level = player_service.send(:get_permission_level, 'testbotseebugs4')
       expect(level).to eq(20)
     end

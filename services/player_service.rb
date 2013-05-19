@@ -1,14 +1,10 @@
 require_relative '../models/player'
 
 class PlayerService
-  def initialize(user_files_dir)
-    unless defined?(user_files_dir) && !user_files_dir.nil?
-      raise(ArgumentError, 'must supply path to directory containing the user files')
-    end
-    unless File.directory?(user_files_dir)
-      raise(ArgumentError, 'path that was supplied was not a directory')
-    end
-    @user_files_dir = user_files_dir
+  def initialize(player_data_service)
+    raise(ArgumentError, 'Must supply player data service') if player_data_service.nil?
+    raise(ArgumentError, 'Must supply valid player data service object') unless player_data_service.respond_to?(:get_player_data)
+    @player_data_service = player_data_service
   end
 
   def get_player(username)
@@ -33,14 +29,14 @@ class PlayerService
     validate_username(username)
 
     email = nil
-    file = File.new(get_filename(username), 'r')
-    while (line = file.gets)
+
+    lines = @player_data_service.get_player_data(username).split(/\n/)
+    lines.each do |line|
       if line =~ /^string finger.email ".+"$/
-        email = line.sub(/^string finger.email "(.+)"$/,'\1').chomp
+        email = line.sub(/^string finger.email "(.+)"$/,'\1')
         break
       end
     end
-    file.close
 
     email
   end
@@ -70,24 +66,18 @@ class PlayerService
   def validate_username(username)
     raise(ArgumentError, 'Must supply username') if username.nil?
     raise(ArgumentError, 'Invalid username format') unless username =~ /^[a-z0-9_]+$/
-    filename = @user_files_dir + '/' + username
-    raise(ArgumentError, "Non-existant username #{username}") unless File.file?(filename)
-  end
-
-  def get_filename(username)
-    @user_files_dir + '/' + username
   end
 
   def get_generic_flags(type, username)
     flags = Set.new
-    file = File.new(get_filename(username), 'r')
-    while (line = file.gets)
+
+    lines = @player_data_service.get_player_data(username).split(/\n/)
+    lines.each do |line|
       if line =~ /^#{type} /
         flags = flags.merge(line.sub(/^#{type} /,'').split(' '))
         break
       end
     end
-    file.close
 
     flags
   end
@@ -114,15 +104,14 @@ class PlayerService
 
   def get_int_value(attribute, username)
     value = nil
-    file = File.new(get_filename(username), 'r')
-    while (line = file.gets)
+
+    lines = @player_data_service.get_player_data(username).split(/\n/)
+    lines.each do |line|
       if line =~ /^int #{attribute} \d+.*$/
-        value = line.sub(/^int #{attribute} (\d+).*$/,'\1').chomp
+        value = line.sub(/^int #{attribute} (\d+).*$/,'\1')
         break
       end
     end
-    file.close
-
     value = value.to_i unless value.nil?
 
     value
