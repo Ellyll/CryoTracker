@@ -1,53 +1,113 @@
 require 'rspec'
-require_relative '../../services/player_service'
+require_relative '../../services/user_service'
+require_relative '../../services/player_data_deserialiser'
+require_relative '../../services/player_data_service'
 
-describe PlayerService do
+describe UserService do
   describe '#initialize' do
-    context 'when not given a player data service' do
+    context 'when not given a player data service and a player data deserialiser' do
       it 'raises an ArgumentError' do
         #noinspection RubyArgCount
-        expect { PlayerService.new }.to raise_error(ArgumentError)
-        expect { PlayerService.new(nil) }.to raise_error(ArgumentError)
+        expect { UserService.new }.to raise_error(ArgumentError)
+        expect { UserService.new(nil, nil) }.to raise_error(ArgumentError)
       end
     end
   end
 
-  describe '#get_player' do
+  describe '#get_user' do
 
+    player_data_deserialiser = PlayerDataDeserialiser.new
     player_data_service = PlayerDataService.new(File.dirname(__FILE__) + '/testusers')
-    player_service = PlayerService.new(player_data_service)
+    user_service = UserService.new(player_data_service, player_data_deserialiser)
 
     context 'when not given a username' do
       it 'raises an ArgumentError' do
         #noinspection RubyArgCount
-        expect { player_service.get_player() }.to raise_error(ArgumentError)
+        expect { user_service.get_user() }.to raise_error(ArgumentError)
       end
     end
 
     context 'when given a nil username' do
       it 'raises an ArgumentError' do
-        expect { player_service.get_player(nil) }.to raise_error(ArgumentError)
+        expect { user_service.get_user(nil) }.to raise_error(ArgumentError)
       end
     end
 
     context 'when given a non-existant username' do
       it 'raises a SystemCallError' do
-        expect { player_service.get_player('non_existant_user') }.to raise_error(ArgumentError)
+        expect { user_service.get_user('non_existant_user') }.to raise_error(ArgumentError)
       end
     end
-    context 'when given a valid username' do
-      it 'return a player object for the player with that username' do
-        player = player_service.get_player('testbot')
 
-        expect(player.class).to eq(Player)
-        expect(player.username).to eq('testbot')
-        expect(player.email_address).to eq('testbot@cryosphere.net')
-        expect(player).to_not be_banned
-        expect(player).to be_able_to_see_others_bugs
+    context 'when given a valid username' do
+      subject(:user) { user_service.get_user('testbot') }
+
+      it 'returns a User object' do
+        expect(user.class).to eq(User)
+      end
+
+      it 'sets username on the returned User' do
+        expect(user.username).to eq('testbot')
+      end
+
+      it 'sets email_address on the returned User' do
+        expect(user.email_address).to eq('testbot@cryosphere.net')
+      end
+
+      it 'sets banned on the returned User' do
+        expect(user).to_not be_banned
+      end
+
+      it 'sets able_to_see_others_bugs on returned User' do
+        expect(user).to be_able_to_see_others_bugs
       end
     end
   end
 
+  # private
+
+  describe '#see_bugs?' do
+    player_data_service = PlayerDataService.new(File.dirname(__FILE__) + '/testusers')
+    player_data_deserialiser = PlayerDataDeserialiser.new
+    user_service = UserService.new(player_data_service, player_data_deserialiser)
+
+    context 'when player has level >= 23 and does not have the SeeBugs pflag denied' do
+      it 'returns true' do
+        player_data = player_data_service.get_player_data('testbotseebugs1')
+        player = player_data_deserialiser.deserialise(player_data)
+
+        expect( user_service.send(:see_bugs?, player) ).to be_true
+      end
+    end
+    context 'when player has level >= 23 and has the SeeBugs pflag denied' do
+      it 'returns false' do
+        player_data = player_data_service.get_player_data('testbotseebugs2')
+        player = player_data_deserialiser.deserialise(player_data)
+
+        expect( user_service.send(:see_bugs?, player) ).to_not be_nil
+        expect( user_service.send(:see_bugs?, player) ).to be_false
+      end
+    end
+    context 'when player has level < 23 and does not have the SeeBugs pflag granted' do
+      it 'returns false' do
+        player_data = player_data_service.get_player_data('testbotseebugs3')
+        player = player_data_deserialiser.deserialise(player_data)
+
+        expect( user_service.send(:see_bugs?, player) ).to_not be_nil
+        expect( user_service.send(:see_bugs?, player) ).to be_false
+      end
+    end
+    context 'when player has level < 23 and has the SeeBugs pflag granted' do
+      it 'returns true' do
+        player_data = player_data_service.get_player_data('testbotseebugs4')
+        player = player_data_deserialiser.deserialise(player_data)
+
+        expect( user_service.send(:see_bugs?, player) ).to be_true
+      end
+    end
+  end
+
+=begin
   describe '#get_flags' do
     player_data_service = PlayerDataService.new(File.dirname(__FILE__) + '/testusers')
     player_service = PlayerService.new(player_data_service)
@@ -200,5 +260,6 @@ describe PlayerService do
     end
 
   end
+=end
 
 end

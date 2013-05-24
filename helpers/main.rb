@@ -39,10 +39,11 @@ helpers do
     username = @auth.credentials[0]
 
     player_data_service = PlayerDataService.new(user_files_directory)
-    player_service = PlayerService.new(player_data_service)
-    player = player_service.get_player(username)
+    player_data_deserialiser = PlayerDataDeserialiser.new
+    user_service = UserService.new(player_data_service, player_data_deserialiser)
+    user = user_service.get_user(username)
 
-    player.banned?
+    user.banned?
   end
 
   def get_page(page_param)

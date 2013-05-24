@@ -1,53 +1,39 @@
 require_relative '../models/player'
+require_relative '../models/user'
 
-class PlayerService
-  def initialize(player_data_service)
-    raise(ArgumentError, 'Must supply player data service') if player_data_service.nil?
+class UserService
+  def initialize(player_data_service, player_data_deserialiser)
+    raise(ArgumentError, 'Must supply player data service object') if player_data_service.nil?
     raise(ArgumentError, 'Must supply valid player data service object') unless player_data_service.respond_to?(:get_player_data)
+    raise(ArgumentError, 'Must supply player data deserialiser object') if player_data_deserialiser.nil?
+    raise(ArgumentError, 'Must supply valid player data deserialiser object') unless player_data_deserialiser.respond_to?(:deserialise)
+
     @player_data_service = player_data_service
+    @player_data_deserialiser = player_data_deserialiser
   end
 
-  def get_player(username)
+  def get_user(username)
     validate_username(username)
 
-    player = Player.new
-    player.username = username
-    player.email_address = get_email(username)
-    player.banned = banned?(username)
-    player.able_to_see_others_bugs = see_bugs?(username)
+    player_data = @player_data_service.get_player_data(username)
+    player = @player_data_deserialiser.deserialise(player_data)
 
-    player
+    user = User.new
+    user.username = username
+    user.email_address = player.strings['finger.email']
+    user.banned = player.flags.include?('BugBanned')
+    user.able_to_see_others_bugs = see_bugs?(player)
+
+    user
   end
 
-  def get_flags(username)
-    validate_username(username)
+  private
 
-    get_generic_flags('flags', username)
-  end
-
-  def get_email(username)
-    validate_username(username)
-
-    email = nil
-
-    lines = @player_data_service.get_player_data(username).split(/\n/)
-    lines.each do |line|
-      if line =~ /^string finger.email ".+"$/
-        email = line.sub(/^string finger.email "(.+)"$/,'\1')
-        break
-      end
-    end
-
-    email
-  end
-
-  def see_bugs?(username)
-    validate_username(username)
-
+  def see_bugs?(player)
     can_see = false
-    level = get_permission_level(username)
-    granted = get_granted_flags(username)
-    withheld = get_withheld_flags(username)
+    level = get_permission_level(player)
+    granted = player.granted
+    withheld = player.withheld
 
     if (level >= 23 && !withheld.include?('SeeBugs')) ||
        (level < 23 && granted.include?('SeeBugs'))
@@ -57,64 +43,21 @@ class PlayerService
     can_see
   end
 
-  private
-
-  def banned?(username)
-    get_flags(username).include?('BugBanned')
-  end
-
   def validate_username(username)
     raise(ArgumentError, 'Must supply username') if username.nil?
     raise(ArgumentError, 'Invalid username format') unless username =~ /^[a-z0-9_]+$/
   end
 
-  def get_generic_flags(type, username)
-    flags = Set.new
-
-    lines = @player_data_service.get_player_data(username).split(/\n/)
-    lines.each do |line|
-      if line =~ /^#{type} /
-        flags = flags.merge(line.sub(/^#{type} /,'').split(' '))
-        break
-      end
-    end
-
-    flags
-  end
-
-  def get_granted_flags(username)
-    get_generic_flags('granted', username)
-  end
-
-  def get_withheld_flags(username)
-    get_generic_flags('withheld', username)
-  end
-
-  def get_permission_level(username)
-    level = get_int_value('privs', username)
+  def get_permission_level(player)
+    level = player.ints['privs']
     if level.nil? || level <= 0
-      level = get_int_value('level', username)
+      level = player.ints['level']
       level = level.to_i unless level.nil?
     end
 
     level = 0 if level.nil?
 
     level
-  end
-
-  def get_int_value(attribute, username)
-    value = nil
-
-    lines = @player_data_service.get_player_data(username).split(/\n/)
-    lines.each do |line|
-      if line =~ /^int #{attribute} \d+.*$/
-        value = line.sub(/^int #{attribute} (\d+).*$/,'\1')
-        break
-      end
-    end
-    value = value.to_i unless value.nil?
-
-    value
   end
 
 end
