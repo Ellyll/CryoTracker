@@ -34,7 +34,7 @@ describe UserService do
     end
 
     context 'when given a non-existant username' do
-      it 'raises a SystemCallError' do
+      it 'raises a ArgumentError' do
         expect { user_service.get_user('non_existant_user') }.to raise_error(ArgumentError)
       end
     end
