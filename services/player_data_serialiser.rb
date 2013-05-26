@@ -8,7 +8,7 @@ class PlayerDataSerialiser
     raise(ArgumentError, 'must supply a Player object') if player.nil?
     raise(ArgumentError, 'supplied object was not of type Player') unless player.kind_of?(Player)
 
-    player_data = "mudobject #{player.username} {\n"
+    player_data = "mudobject \"#{player.username}\" {\n"
 
     player_data += serialise_flags(player.flags, 'flags')
     player_data += serialise_flags(player.granted, 'granted')

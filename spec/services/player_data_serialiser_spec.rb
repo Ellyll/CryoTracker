@@ -45,7 +45,7 @@ goes over a line and \" contains double quotes
       end
 
       it 'serialises username' do
-        expect(player_data).to match(/^mudobject testbot {\n/)
+        expect(player_data).to match(/^mudobject "testbot" {\n/)
       end
 
       it 'serialises flags' do
