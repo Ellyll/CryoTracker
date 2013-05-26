@@ -21,7 +21,7 @@ class UserService
     user = User.new
     user.username = username
     user.email_address = player.strings['finger.email']
-    user.banned = player.flags.include?('BugBanned')
+    user.banned = banned?(player)
     user.able_to_see_others_bugs = see_bugs?(player)
 
     user
@@ -41,6 +41,10 @@ class UserService
     end
 
     can_see
+  end
+
+  def banned?(player)
+    player.flags.include?('BugBanned')
   end
 
   def validate_username(username)
