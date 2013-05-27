@@ -20,6 +20,7 @@ class UserService
 
     user = User.new
     user.username = username
+    user.password = player.strings['password']
     user.email_address = player.strings['finger.email']
     user.banned = banned?(player)
     user.able_to_see_others_bugs = see_bugs?(player)

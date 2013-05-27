@@ -91,6 +91,7 @@ describe UserService do
             :missions => Set.new(%w(Academy Bandits Canister Dove Eviction Grain HolyGrail Hospital Invincible Ionstorm Kazimierz Legion Medical Mercury Recover Rescue Rogue Silo Skinner Tea sim:Combat1)),
             :strings =>
                         {
+                          'password' => 'JBMg3fRi73o3.',
                           'owner' => 'level2_36',
                           'description' => "A description that
 goes over a line and \" contains double quotes
@@ -109,6 +110,10 @@ goes over a line and \" contains double quotes
 
       it 'sets username on the returned User' do
         expect(user.username).to eq('testbot')
+      end
+
+      it 'sets password on the returned User' do
+        expect(user.password).to eq('JBMg3fRi73o3.')
       end
 
       it 'sets email_address on the returned User' do
