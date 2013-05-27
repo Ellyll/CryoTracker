@@ -1,0 +1,4 @@
+mudobject "abletoseeallbugstrue" {
+string password "JBMg3fRi73o3."
+int privs 999
+}

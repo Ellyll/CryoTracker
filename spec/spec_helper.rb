@@ -191,6 +191,28 @@ def create_test_bugs
             :submitted => DateTime.now,
             :comment_count => 0
           },
-         ]
+          { :user => 'abletoseeallbugsfalse',
+            :text => 'A. test description',
+            :current_state_id => 1,
+            :current_severity_id => 2,
+            :initial_severity_id => 2,
+            :current_component_1_id => 5,
+            :current_component_2 => '',
+            :last_modified => DateTime.now,
+            :submitted => DateTime.now,
+            :comment_count => 0
+          },
+          { :user => 'abletoseeallbugstrue',
+            :text => 'A. test description',
+            :current_state_id => 1,
+            :current_severity_id => 2,
+            :initial_severity_id => 2,
+            :current_component_1_id => 5,
+            :current_component_2 => '',
+            :last_modified => DateTime.now,
+            :submitted => DateTime.now,
+            :comment_count => 0
+          }
+  ]
   bugs.each { |item| Bug.create(item) }
 end

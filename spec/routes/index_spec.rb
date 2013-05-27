@@ -44,6 +44,11 @@ describe 'GET /index' do
     doc.css('td.state_name').map {|b| b.content}
   end
 
+  def get_reported_by_from_body(body)
+    doc = Nokogiri::HTML(body)
+    doc.css('td.reported_by').map {|b| b.content}
+  end
+
   context 'when not given login credentials' do
     it 'responds with status 401 (Unauthorised)' do
       get '/'
@@ -70,8 +75,33 @@ describe 'GET /index' do
       its(:status) { should eq(403) } # Forbidden
     end
 
+    context 'and user.able_to_see_others_bugs? is false' do
+      it 'shows only the user\'s own bugs' do
+        username = 'abletoseeallbugsfalse'
+        authorize(username, 'mmmhufenia')
+        get '/'
+        users = get_reported_by_from_body(last_response.body)
+        others = users.select { |u| u != username }
+        mine = users.select { |u| u == username }
 
-    it 'will allow users with see_all_bugs? false to see only their own bugs'
+        expect(others).to be_empty
+        expect(mine).to_not be_empty
+      end
+    end
+
+    context 'and user.able_to_see_others_bugs? is true' do
+      it 'shows other users\' bugs' do
+        username = 'abletoseeallbugstrue'
+        authorize(username, 'mmmhufenia')
+        get '/'
+        users = get_reported_by_from_body(last_response.body)
+        others = users.select { |u| u != username }
+        mine = users.select { |u| u == username }
+
+        expect(others).to_not be_empty
+        expect(mine).to_not be_empty
+      end
+    end
 
     context 'without any parameters, the response' do
       before { do_auth; get '/' }

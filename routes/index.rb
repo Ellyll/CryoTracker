@@ -98,6 +98,10 @@ get '/' do
       :order => order
   )
 
+  unless @current_user.able_to_see_others_bugs?
+    @bugs = @bugs.all( :reported_by => @current_user.username)
+  end
+
   if states.count > 0
     @bugs = @bugs.all( :current_state_id => states )
   end
