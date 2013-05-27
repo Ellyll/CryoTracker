@@ -1,49 +1,55 @@
 require 'open-uri'
+require_relative '../services/player_data_service'
+require_relative '../services/player_data_deserialiser'
+require_relative '../services/user_service'
 
 helpers do
 
-  def protected!
-    unless authorised?
-      response['WWW-Authenticate'] = "Basic realm=\"#{Config::APP[:name]}\""
-      throw(:halt, [401, "Not authorised\n"])
-    end
-
-    if banned?
-      throw(:halt, [403, "Forbidden (Banned)\n"])
-    end
-  end
-
-  def authorised?
-    if ((defined? settings) && settings.environment == :test) || ENV['RACK_ENV'] == 'test'
-      user_files_directory = Config::TEST[:user_files_directory]
-    else
-      user_files_directory = Config::AUTHENTICATION[:user_files_directory]
-    end
-    as = AuthenticationService.new(user_files_directory)
+  def authenticate!
     @auth ||=  Rack::Auth::Basic::Request.new(request.env)
     if @auth.provided? && @auth.basic? && @auth.credentials
       username = @auth.credentials[0]
       password = @auth.credentials[1]
-      return as.is_authenticated?(username, password)
+    else
+      not_authorised!
     end
-    false
-  end
 
-  def banned?
+    if username.nil? ||
+       username.empty? ||
+       password.nil? ||
+       password.empty?
+      not_authorised!
+    end
+
     if ((defined? settings) && settings.environment == :test) || ENV['RACK_ENV'] == 'test'
       user_files_directory = Config::TEST[:user_files_directory]
     else
       user_files_directory = Config::AUTHENTICATION[:user_files_directory]
     end
-
-    username = @auth.credentials[0]
-
     player_data_service = PlayerDataService.new(user_files_directory)
-    player_data_deserialiser = PlayerDataDeserialiser.new
+    player_data_deserialiser = PlayerDataDeserialiser.new()
     user_service = UserService.new(player_data_service, player_data_deserialiser)
-    user = user_service.get_user(username)
 
-    user.banned?
+    begin
+      user = user_service.get_user(username)
+    rescue ArgumentError # user not found
+      user = nil
+    end
+
+    not_authorised! if user.nil?
+    not_authorised! unless user.password_matches?(password)
+    banned! if user.banned?
+
+    user
+  end
+
+  def not_authorised!
+    response['WWW-Authenticate'] = "Basic realm=\"#{Config::APP[:name]}\""
+    throw(:halt, [401, "Not authorised\n"])
+  end
+
+  def banned!
+    throw(:halt, [403, "Forbidden (Banned)\n"])
   end
 
   def get_page(page_param)

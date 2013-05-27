@@ -82,9 +82,9 @@ end
 
 
 get '/' do
-  protected!
+  @current_user = authenticate!
+
   @title = "#{Config::APP[:name]} - Bugs"
-  #TODO: check if user is banned
 
   page = get_page(params[:page])
   page_size = get_page_size(params[:page_size])
