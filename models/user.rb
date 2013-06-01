@@ -11,12 +11,12 @@ class User
   end
 
   def password_matches?(password)
+    return false if password.nil?
+    return false if password.length == 0
 
     # note that only first 8 chars are relevant in crypt() :(
 
-    if !password.nil? &&
-        password.length > 0 &&
-        @password == password.crypt(@password)
+    if @password == password.crypt(@password)
       return true
     end
 
