@@ -1,3 +1,8 @@
+require_relative '../spec_helper'
+require_relative '../../services/fixed_bugs_service'
+
+create_test_data
+
 
 describe FixedBugsService do
   describe '#get_recently_fixed_bugs' do

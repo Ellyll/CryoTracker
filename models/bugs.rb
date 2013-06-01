@@ -124,8 +124,7 @@ class BugList
   property :last_changed_by, String, :length => 255
 end
 
-if ((defined? settings) && settings.environment == :test) || ENV['RACK_ENV'] == 'test'
-  DataMapper.finalize.auto_migrate!
+def self.create_views
   buglist_create_view_sql = <<EOF
 DROP TABLE `bug_list_view`;
 CREATE VIEW `bug_list_view` AS
@@ -156,6 +155,11 @@ CREATE VIEW `bug_list_view` AS
 EOF
   adapter = DataMapper.repository(:default).adapter
   adapter.execute(buglist_create_view_sql)
+end
+
+if ((defined? settings) && settings.environment == :test) || ENV['RACK_ENV'] == 'test'
+  DataMapper.finalize.auto_migrate!
+  create_views()
 else
   DataMapper.finalize
 end

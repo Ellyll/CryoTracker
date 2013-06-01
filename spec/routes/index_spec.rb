@@ -1,6 +1,7 @@
-require 'rack/test'
-require 'rspec'
+require_relative '../spec_helper'
+require 'nokogiri'
 
+create_test_data
 
 describe 'GET /index' do
   include Rack::Test::Methods
