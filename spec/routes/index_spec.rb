@@ -193,7 +193,21 @@ describe 'GET /index' do
           end
         end
       end
+      context 'all' do
+        subject(:response) do
+          do_auth
+          get '/?state=all'
+          last_response
+        end
+        it { should be_ok }
+        its(:status) { should eq(200) }
+        it 'shows all states' do
+          state_names = get_state_names_from_body(response.body)
+          states_set = Set.new(state_names)
+          expect(states_set).to_not be_empty
+          expect(states_set.count).to be > 1 # should be more than one state
+        end
+      end
     end
-
   end
 end
