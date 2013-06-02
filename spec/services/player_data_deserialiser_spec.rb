@@ -58,6 +58,10 @@ EOF
       expect(player.ints['level']).to eq(20)
       expect(player.ints['$transaction.2.amount']).to eq(-100) # Check can handle negative values
     end
+
+    it 'raises PlayerDataDeserialiserError if player data does not contain mudobject in header' do
+      expect { player_data_deserialiser.deserialise('this is some invalid data') }.to raise_error(PlayerDataDeserialiserError)
+    end
   end
 
   # private
@@ -75,6 +79,14 @@ EOF
     end
     it 'reads the header name' do
       expect(header_name).to eq('testbot')
+    end
+
+    it 'raises a PlayerDataDeserialiserError if a newline is encountered after reading header type' do
+      expect { player_data_deserialiser.read_header("mudobject\n", 0) }. to raise_error(PlayerDataDeserialiserError)
+    end
+
+    it 'raises a PlayerDataDeserialiserError if an opening { is not found while reading header' do
+      expect { player_data_deserialiser.read_header("mudobject \"someuser\"\n", 0) }. to raise_error(PlayerDataDeserialiserError)
     end
   end
 
@@ -111,6 +123,10 @@ EOF
     it 'reads the int values' do
       expect(ints).to_not be_empty
       expect(ints['level']).to eq(20)
+    end
+
+    it 'raises a PlayerDataDeserialiserError if an unrecognised data type is encountered' do
+      expect { player_data_deserialiser.read_body("unknowndatatype 123\n", 0) }. to raise_error(PlayerDataDeserialiserError)
     end
   end
 end
