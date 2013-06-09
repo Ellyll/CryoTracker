@@ -1,8 +1,8 @@
 !!! 5
 %html
   %head
-    %link(rel="stylesheet" type="text/css" href="css/app.css")
-    %link(rel="icon" href="images/nobugs-icon.jpg" type="image/jpeg")
+    %link(rel="stylesheet" type="text/css" href="/css/app.css")
+    %link(rel="icon" href="/images/nobugs-icon.jpg" type="image/jpeg")
     %title=@title
     %meta(charset="utf-8")
   %body
@@ -15,39 +15,39 @@
       .heading_links
         %a(href="/")Main
         |
-        %a(href="?watchlist=1")Watchlist
+        %a(href="/?watchlist=1")Watchlist
         |
-        %a(href="stats")Stats
+        %a(href="/stats")Stats
         |
-        %a(href="submit")Submit a Bug
+        %a(href="/submit")Submit a Bug
         |
-        %a(href="cabal")Cabal List
+        %a(href="/cabal")Cabal List
         |
-        %a(href="about")About
+        %a(href="/about")About
         |
         %a(href="/dev/")Admin Area
         %br/
         Bugs:
-        %a(href="summary")Summary
+        %a(href="/summary")Summary
         -
-        %a(href="?state=all")All
+        %a(href="/?state=all")All
         -
-        %a(href="?state=open")Open
+        %a(href="/?state=open")Open
         (
-        %a(href="?state=new")New
+        %a(href="/?state=new")New
         -
-        %a(href="?state=confirmed")Confirmed
+        %a(href="/?state=confirmed")Confirmed
         ) -
-        %a(href="?state=closed")Closed
+        %a(href="/?state=closed")Closed
         (
-        %a(href="?state=unverified")Unverified
+        %a(href="/?state=unverified")Unverified
         -
-        %a(href="?state=verified")Verified
+        %a(href="/?state=verified")Verified
         ) -
-        %a(href="?state=unbugs")Unbugs
+        %a(href="/?state=unbugs")Unbugs
         (
-        %a(href="?state=held")Held -
-        %a(href="?state=notabug")NotABug
+        %a(href="/?state=held")Held -
+        %a(href="/?state=notabug")NotABug
         )
         %hr/
     = yield

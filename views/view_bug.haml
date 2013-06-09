@@ -1,0 +1,23 @@
+%h2="Bug #{@bug.id}"
+%table.bug
+  %tr.bug_id
+    %th(scope="row")ID
+    %td=@bug.id
+  %tr.reported_by
+    %th(scope="row")Reported By
+    %td=@bug.user
+  %tr.state
+    %th(scope="row")State
+    %td=@bug.current_state.name
+  %tr.submitted
+    %th(scope="row")Submitted
+    %td=@bug.submitted.strftime('%Y-%m-%d %H:%M:%S')
+  %tr.component
+    %th(scope="row")Component
+    %td=@bug.current_component
+  %tr.severity
+    %th(scope="row")Severity
+    %td=@bug.current_severity.name
+  %tr.description
+    %th(scope="row")Description
+    %td=@bug.text

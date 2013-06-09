@@ -75,3 +75,13 @@ table.bug_list td.description {
 table.bug_list td.descrption p {
     margin: 0.25em;
 }
+
+table.bug th {
+    color: #FFF;
+    background-color: #000;
+}
+
+table.bug td {
+    max-width: 40em;
+    text-align: left;
+}
