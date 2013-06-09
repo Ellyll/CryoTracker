@@ -43,6 +43,18 @@ class Bug
   belongs_to :current_severity, 'Severity'
   belongs_to :initial_severity, 'Severity'
   belongs_to :current_component_1, 'Component1'
+
+  def current_component()
+    if self.current_component_1.nil?
+      text = ''
+    else
+      text = self.current_component_1.name
+      if !self.current_component_2.nil? && self.current_component_2.length > 0
+        text += ':' + self.current_component_2
+      end
+    end
+    text
+  end
 end
 
 class Comment
